@@ -78,6 +78,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CollectionsBookmarkRounded } from "@mui/icons-material";
+import PropertyOwnership from "./PropertyOwnership";
 import PropertiesContext from "../../contexts/PropertiesContext";
 import ListsContext from "../../contexts/ListsContext.js";
 import LeaseDetailsComponent from "./LeaseDetailsComponent.jsx";
@@ -124,6 +125,7 @@ export default function PropertyNavigator2({
   handleTabChange,
   currentTab,
   setCurrentTab,
+  showOnly
 }) {
   // //console.log("In Property Navigator", onEditClick);
   // //console.log(index, propertyList);
@@ -441,6 +443,8 @@ export default function PropertyNavigator2({
     }
   }, [currentIndex, propertyId, allRentStatus, returnIndex, propertyList, allContracts, propertyData]);
   // }, [currentIndex, propertyId, allRentStatus]);
+
+
 
   const tenant_detail = property && property.lease_start && property.tenant_uid ? `${property.tenant_first_name} ${property.tenant_last_name}` : "No Tenant";
   const manager_detail = property && property.business_uid ? `${property.business_name}` : "No Manager";
@@ -1046,6 +1050,8 @@ export default function PropertyNavigator2({
     setSnackbarOpen(false);
   };
 
+
+
   const getApplianceCategories = () => {
     const applnCategories = getList("appliances");
     // //console.log("appliance categories - ", applnCategories);
@@ -1446,6 +1452,7 @@ export default function PropertyNavigator2({
             onAddListingClick={onAddListingClick}
             onShowSearchManager={onShowSearchManager}
             onEditClick={onEditClick}
+            onEditOwnership={onEditClick ? () => onEditClick("edit_ownership") : undefined}
           />
         </CustomTabPanel>
         <CustomTabPanel value={currentTab} index={1}>
@@ -2859,9 +2866,16 @@ const PropertyTabPanel = (props) => {
             </Grid>
 
             <PropertyDetailsGrid propertyDetails={property?.property_details || '{}'} />
+
           </Grid>
         </Grid>
       </Grid>
+
+      {/* Property Owners Section */}
+      <PropertyOwnership 
+        propertyUid={property?.property_uid}
+        onEditOwnership={props.onEditOwnership}
+      />
     </Grid>
      </ThemeProvider>
   );

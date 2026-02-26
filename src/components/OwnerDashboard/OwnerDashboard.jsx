@@ -105,7 +105,7 @@ export default function OwnerDashboard() {
     }    
     setAnnouncementRecvData(announcementsReceivedData || ["Card 1", "Card 2", "Card 3", "Card 4", "Card 5"]);
 
-    setAnnouncementSentData(jsonData?.announcementsSent?.result);
+    setAnnouncementSentData(jsonData?.announcementsSent?.result || []);
     setPropertyList(jsonData?.properties?.result);
 
     setMaintenanceStatusData(jsonData.maintenanceStatus.result);
@@ -257,12 +257,12 @@ export default function OwnerDashboard() {
                                 setView("announcements")
                               }}
                             >
-                              {isMobile ? `(${announcementRecvData.length + announcementSentData.length})` : `View all (${announcementRecvData.length + announcementSentData.length})`}
+                              {isMobile ? `(${(announcementRecvData?.length || 0) + (announcementSentData?.length || 0)})` : `View all (${(announcementRecvData?.length || 0) + (announcementSentData?.length || 0)})`}
                             </Box>
                           </Box>
                         </Grid>
                       </Grid>
-                      {announcementRecvData.length > 0 ? (
+                      {announcementRecvData?.length > 0 ? (
                         <NewCardSlider announcementList={announcementRecvData} isMobile={isMobile} />
                       ) : (
                         <Box sx={{ display: "flex", alignItems: "center", alignContent: "center", justifyContent: "center", minHeight: "235px" }}>

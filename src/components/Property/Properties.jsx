@@ -10,6 +10,7 @@ import PropertiesList from "./PropertiesList";
 import PropertyNavigator from "./PropertyNavigator";
 import PropertyNavigator2 from "./PropertyNavigator2";
 import EditProperty from "./EditProperty";
+import EditPropertyOwnership from "./EditPropertyOwnership";
 import ViewLease from "../Leases/ViewLease";
 import ViewManagementContract from "../Contracts/OwnerManagerContracts/ViewManagementContract";
 import TenantApplicationNav from "../Applications/TenantApplicationNav";
@@ -289,7 +290,11 @@ function Properties() {
 
   const handleEditClick = (editPage) => {
     setPage(editPage);
-    setRHS("EditProperty");
+    if (editPage === "edit_ownership") {
+      setRHS("EditOwnership");
+    } else {
+      setRHS("EditProperty");
+    }
   };
 
   const handleListClick = (newData) => {
@@ -341,6 +346,8 @@ function Properties() {
       setViewRHS(true);
     }
     setRHS("PropertyNavigator");
+    // Trigger a refresh if needed
+    setReloadPropertyList(!reloadPropertyList);
   };
 
   const handleViewApplication = (index) => {
@@ -486,6 +493,12 @@ function Properties() {
                         isDesktop={isDesktop}
                         onBackClick={handleBackClick}
                         setRHS={setRHS}
+                      />
+                    )}
+                    {RHS === "EditOwnership" && (
+                      <EditPropertyOwnership
+                        propertyUid={propertyList[returnIndex]?.property_uid}
+                        onClose={handleBackClick}
                       />
                     )}
                     {RHS === "ViewLease" && <ViewLease lease_id={propertyList[0].lease_uid} isDesktop={isDesktop} onBackClick={handleBackClick} />}

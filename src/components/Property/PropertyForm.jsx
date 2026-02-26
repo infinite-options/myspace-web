@@ -196,6 +196,8 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 	const [favImg, setFavImg] = useState('');
 	const [isRapidImages, setIsRapidImages] = useState(false);
 	const [isImgUploaderToBeDis, setIsImgUploaderToBeDis] = useState(false);
+			//dialog box for duplicate property
+	const [duplicatePropertyDialog, setDuplicatePropertyDialog] = useState({open: false, property: null});
 
 
 	const handleCloseModal = () => {
@@ -216,6 +218,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		setState(address.state ? address.state : "");
 		setZip(address.zip ? address.zip : "");
 
+		
 		//Get property details from Zillow Rapid API 
 		const fullAddress = `${address.street}, ${address.city}, ${address.state}, ${address.zip}`;
 		const options = {
@@ -428,6 +431,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 
 		const coordinates = await getLatLongFromAddress(fullAddress);
 
+
 		////console.log("----selectedAppliances----", selectedAppliances);
 
 
@@ -451,7 +455,12 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		formData.append("property_value", cost);
 		formData.append("property_value_year", assessmentYear);
 		formData.append("property_area", squareFootage);
-		formData.append("property_listed", 0);
+
+		//hardcoded to0 so we can not add it in listed
+		//formData.append("property_listed", 0);
+		formData.append("property_listed",isListed?"1":"0" );
+		console.log(" isListed value:", isListed, "-> sending:", isListed ? '1' : '0');
+
 		formData.append("property_notes", notes);
 
 		//console.log("----selectedAppliances---", JSON.stringify(selectedAppliances));
@@ -732,34 +741,87 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			alert("Please select an owner (or) refer a new owner for the property");
 			return;
 		}
-		//console.log("handleSubmitNew - selectedOwner - ", selectedOwner);
-		//console.log("handleSubmitNew - referredOwner - ", referredOwner);
 
-		if (selectedRole === "OWNER") {
-			handleSaveProperty(ownerId);
-			return;
-		}
+		//Search property exists or not 
+		try {
+			const params = new URLSearchParams({
+				property_address: address,
+				property_city: city,
+				property_state: state,
+				property_zip: zip
+			});
 
-		if (selectedOwner != null) {
-			// create property as usual
-			handleSaveProperty(selectedOwner)
-			return;
-		} else {
-			// referring a new owner
+			console.log("Checking for duplicate with params:", {
+				address,
+				city,
+				state,
+				zip,
+				unit: unit || ''
+			});
 
-
-
-			handleReferOwner()
-				.then(() => {
-					//console.log("Successfully Referred Owner ");
-					//handleSaveProperty(ownerUID);
-				})
-				.catch(error => {
-					console.error("Error referring owner:", error);
+			const response = await axiosMiddleware.get(`${APIConfig.baseURL.dev}/properties/search?${params.toString()}`);
+				console.log("Search response:", response.data);
+			
+			if (response.data && response.data.properties && response.data.properties.length > 0) {
+				const currentUnit = String(unit || '').trim();
+				console.log("Current unit:", `'${currentUnit}'`);
+				
+				const duplicateProperty = response.data.properties.find(prop => {
+					const existingUnit = String(prop.property_unit || '').trim();
+					console.log(`Comparing - Existing: '${existingUnit}' vs Current: '${currentUnit}'`);
+					return existingUnit === currentUnit;
 				});
+				
+				if (duplicateProperty) {
+					console.log("DUPLICATE FOUND!", duplicateProperty);
+					setDuplicatePropertyDialog({
+						open:true,
+						property:duplicateProperty
+					})
+					return;
+				} else {
+					console.log("No duplicate found, allowing submission");
+				}
+			} else {
+				console.log("No existing properties found at this address");
+			}
+		} catch (error) {
+			console.error("Error checking for duplicate properties:", error);
 		}
 
-	};
+
+// Continue with saving only if no duplicates found
+//console.log("handleSubmitNew - selectedOwner - ", selectedOwner);
+//console.log("handleSubmitNew - referredOwner - ", referredOwner);			
+				
+				//console.log("handleSubmitNew - selectedOwner - ", selectedOwner);
+				//console.log("handleSubmitNew - referredOwner - ", referredOwner);
+
+				if (selectedRole === "OWNER") {
+					handleSaveProperty(ownerId);
+					return;
+				}
+
+				if (selectedOwner != null) {
+					// create property as usual
+					handleSaveProperty(selectedOwner)
+					return;
+				} else {
+					// referring a new owner
+
+
+
+					handleReferOwner()
+						.then(() => {
+							//console.log("Successfully Referred Owner ");
+							//handleSaveProperty(ownerUID);
+						})
+						.catch(error => {
+							console.error("Error referring owner:", error);
+						});
+				}
+
+			};
 
 	const handleNewUser = async (response) => {
 		//console.log("---response before payload---", response);
@@ -1797,6 +1859,253 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 						</Box>
 					</DialogActions>
 				</Dialog>
+				                
+{/* Duplicate Property Dialog */}
+<Dialog 
+    open={duplicatePropertyDialog.open} 
+    onClose={() => setDuplicatePropertyDialog({ open: false, property: null })}
+    maxWidth="md"
+    fullWidth
+>
+    <DialogTitle sx={{ 
+        backgroundColor: '#F3F4F6',
+        color: '#160449',
+        fontWeight: 'bold',
+        fontSize: '20px'
+    }}>
+        Duplicate Property Found
+    </DialogTitle>
+    <DialogContent sx={{ mt: 2, pb: 3 }}>
+        <DialogContentText sx={{ mb: 3, color: '#374151', fontSize: '15px' }}>
+            This property already exists at this address{duplicatePropertyDialog.property?.property_unit ? ` with unit: ${duplicatePropertyDialog.property.property_unit}` : ''}. 
+            Please review the existing property details below or use the contact buttons to reach out directly from our app.
+        </DialogContentText>
+        
+        {duplicatePropertyDialog.property && (
+            <Box sx={{ 
+                backgroundColor: '#F9FAFB', 
+                padding: 3, 
+                borderRadius: 2,
+                border: '1px solid #E5E7EB'
+            }}>
+                <Typography variant="h6" sx={{ mb: 3, color: '#160449', fontWeight: 'bold', fontSize: '18px' }}>
+                    Property Information
+                </Typography>
+                
+                <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                        <Typography variant="body2" sx={{ color: '#6B7280', fontSize: 13, fontWeight: 600, mb: 0.5 }}>
+                            ADDRESS
+                        </Typography>
+                        <Typography variant="body1" sx={{ fontWeight: 500, fontSize: '16px' }}>
+                            {duplicatePropertyDialog.property.property_address}
+                            {duplicatePropertyDialog.property.property_unit && `, Unit ${duplicatePropertyDialog.property.property_unit}`}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontSize: '15px', color: '#4B5563' }}>
+                            {duplicatePropertyDialog.property.property_city}, {duplicatePropertyDialog.property.property_state} {duplicatePropertyDialog.property.property_zip}
+                        </Typography>
+                    </Grid>
+
+                    {/* Contact Buttons Section */}
+                    <Grid item xs={12}>
+                        <Box sx={{ 
+                            backgroundColor: 'white', 
+                            padding: 2.5, 
+                            borderRadius: 1.5,
+                            border: '1px solid #E5E7EB'
+                        }}>
+                            <Typography variant="body2" sx={{ color: '#6B7280', fontSize: 13, fontWeight: 600, mb: 2 }}>
+                                CONTACT OPTIONS
+                            </Typography>
+                            <Grid container spacing={2}>
+                                {/* Contact Owner Button */}
+                                {duplicatePropertyDialog.property.owner_first_name && duplicatePropertyDialog.property.owner_uid && (
+                                    <Grid item xs={12} sm={4}>
+                                        <Button
+                                            variant="contained"
+                                            fullWidth
+                                            onClick={() => {
+                                                setDuplicatePropertyDialog({ open: false, property: null });
+                                                navigate("/ContactsPM", {
+                                                    state: {
+                                                        contactsTab: 'Owner',
+                                                        ownerId: duplicatePropertyDialog.property.owner_uid,
+                                                    }
+                                                });
+                                            }}
+                                            sx={{
+                                                textTransform: 'none',
+                                                backgroundColor: '#3D5CAC',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                py: 1.5,
+                                                '&:hover': {
+                                                    backgroundColor: '#2D4A9C',
+                                                },
+                                            }}
+                                        >
+                                            Contact Owner
+                                        </Button>
+                                    </Grid>
+                                )}
+
+                                {/* Contact Manager Button */}
+                                {duplicatePropertyDialog.property.business_uid && (
+                                    <Grid item xs={12} sm={4}>
+                                        <Button
+                                            variant="contained"
+                                            fullWidth
+                                            onClick={() => {
+                                                setDuplicatePropertyDialog({ open: false, property: null });
+                                                navigate("/ContactsPM", {
+                                                    state: {
+                                                        contactsTab: 'Manager',
+                                                        managerId: duplicatePropertyDialog.property.business_uid,
+                                                    }
+                                                });
+                                            }}
+                                            sx={{
+                                                textTransform: 'none',
+                                                backgroundColor: '#3D5CAC',
+                                                color: 'white',
+                                                fontWeight: 600,
+                                                py: 1.5,
+                                                '&:hover': {
+                                                    backgroundColor: '#2D4A9C',
+                                                },
+                                            }}
+                                        >
+                                            Contact Manager
+                                        </Button>
+                                    </Grid>
+                                )}
+
+                                {/* Contact PM Employees Button */}
+                                <Grid item xs={12} sm={4}>
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        onClick={() => {
+                                            setDuplicatePropertyDialog({ open: false, property: null });
+                                            navigate("/ContactsPM", {
+                                                state: {
+                                                    contactsTab: 'Employee',
+                                                }
+                                            });
+                                        }}
+                                        sx={{
+                                            textTransform: 'none',
+                                            backgroundColor: '#3D5CAC',
+                                            color: 'white',
+                                            fontWeight: 600,
+                                            py: 1.5,
+                                            '&:hover': {
+                                                backgroundColor: '#2D4A9C',
+                                            },
+                                        }}
+                                    >
+                                        Contact PM Employees
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Grid>
+
+                    {/* Owner Details Card */}
+                    {duplicatePropertyDialog.property.owner_first_name && (
+                        <Grid item xs={12} md={6}>
+                            <Box sx={{ 
+                                backgroundColor: 'white', 
+                                padding: 2, 
+                                borderRadius: 1.5,
+                                border: '1px solid #E5E7EB'
+                            }}>
+                                <Typography variant="body2" sx={{ color: '#6B7280', fontSize: 13, fontWeight: 600, mb: 1 }}>
+                                    PROPERTY OWNER
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 600, fontSize: '16px', mb: 1 }}>
+                                    {duplicatePropertyDialog.property.owner_first_name} {duplicatePropertyDialog.property.owner_last_name}
+                                </Typography>
+                                {duplicatePropertyDialog.property.owner_email && (
+                                    <Typography variant="body2" sx={{ color: '#3B82F6', mb: 0.5, fontSize: '14px' }}>
+                                        📧 {duplicatePropertyDialog.property.owner_email}
+                                    </Typography>
+                                )}
+                                {duplicatePropertyDialog.property.owner_phone_number && (
+                                    <Typography variant="body2" sx={{ color: '#4B5563', fontSize: '14px' }}>
+                                        📞 {duplicatePropertyDialog.property.owner_phone_number}
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Grid>
+                    )}
+
+                    {/* Manager Details Card */}
+                    {duplicatePropertyDialog.property.business_name && (
+                        <Grid item xs={12} md={6}>
+                            <Box sx={{ 
+                                backgroundColor: 'white', 
+                                padding: 2, 
+                                borderRadius: 1.5,
+                                border: '1px solid #E5E7EB'
+                            }}>
+                                <Typography variant="body2" sx={{ color: '#6B7280', fontSize: 13, fontWeight: 600, mb: 1 }}>
+                                    PROPERTY MANAGER
+                                </Typography>
+                                <Typography variant="body1" sx={{ fontWeight: 600, fontSize: '16px', mb: 1 }}>
+                                    {duplicatePropertyDialog.property.business_name}
+                                </Typography>
+                                {duplicatePropertyDialog.property.business_email && (
+                                    <Typography variant="body2" sx={{ color: '#3B82F6', mb: 0.5, fontSize: '14px' }}>
+                                        📧 {duplicatePropertyDialog.property.business_email}
+                                    </Typography>
+                                )}
+                                {duplicatePropertyDialog.property.business_phone_number && (
+                                    <Typography variant="body2" sx={{ color: '#4B5563', fontSize: '14px' }}>
+                                        📞 {duplicatePropertyDialog.property.business_phone_number}
+                                    </Typography>
+                                )}
+                            </Box>
+                        </Grid>
+                    )}
+
+                    {duplicatePropertyDialog.property.contract_name && (
+                        <Grid item xs={12}>
+                            <Typography variant="body2" sx={{ color: '#6B7280', fontSize: 13, fontWeight: 600, mb: 0.5 }}>
+                                CONTRACT
+                            </Typography>
+                            <Typography variant="body1" sx={{ fontWeight: 500, fontSize: '15px' }}>
+                                {duplicatePropertyDialog.property.contract_name}
+                            </Typography>
+                        </Grid>
+                    )}
+                </Grid>
+            </Box>
+        )}
+
+        <DialogContentText sx={{ mt: 3, color: '#6B7280', fontSize: 14, fontStyle: 'italic' }}>
+            If you believe this is an error or need to add a different unit, please modify the unit number above or use the contact buttons to reach out through the app.
+        </DialogContentText>
+    </DialogContent>
+    <DialogActions sx={{ padding: 3, backgroundColor: '#F9FAFB' }}>
+        <Button
+            onClick={() => setDuplicatePropertyDialog({ open: false, property: null })}
+            sx={{
+                color: 'white',
+                backgroundColor: '#3D5CAC',
+                ':hover': {
+                    backgroundColor: '#2D4A9C',
+                },
+                textTransform: 'none',
+                fontWeight: 'bold',
+                px: 5,
+                py: 1
+            }}
+        >
+            Close
+        </Button>
+    </DialogActions>
+</Dialog>			
 
 				<Dialog open={showEmailSentDialog} onClose={() => setShowEmailSentDialog(false)} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
 					<DialogTitle id="alert-dialog-title">Referral Sent</DialogTitle>

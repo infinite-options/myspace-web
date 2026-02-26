@@ -39,6 +39,7 @@ export default function PMQuotesList() {
 
   const [viewRHS, setViewRHS] = useState(false)
 
+
   useEffect(() => {
     setShowSpinner(!dataLoaded);
   }, [dataLoaded]);
@@ -101,31 +102,68 @@ const QuotesList = (props) => {
   const [sortField, setSortField] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  useEffect(() => {
-    let sorted = [...contractRequests];
 
-    if (sortField === "owner") {
-      sorted.sort((a, b) => {
-        const ownerA = a.owner_first_name.toLowerCase() + a.owner_last_name.toLowerCase();
-        const ownerB = b.owner_first_name.toLowerCase() + b.owner_last_name.toLowerCase();
-        return sortOrder === "asc" ? ownerA.localeCompare(ownerB) : ownerB.localeCompare(ownerA);
-      });
-    } else if (sortField === "address") {
-      sorted.sort((a, b) => {
-        const addressA = a.property_address.toLowerCase();
-        const addressB = b.property_address.toLowerCase();
-        return sortOrder === "asc" ? addressA.localeCompare(addressB) : addressB.localeCompare(addressA);
-      });
-    } else if (sortField === "status") {
-      sorted.sort((a, b) => {
-        const statusA = a.contract_status.toLowerCase();
-        const statusB = b.contract_status.toLowerCase();
-        return sortOrder === "asc" ? statusA.localeCompare(statusB) : statusB.localeCompare(statusA);
-      });
-    }
+  //to add next pages
+  const[currentPage,setCurrentPage]=useState(1);
 
-    setSortedContracts(sorted);
-  }, [contractRequests, sortField, sortOrder]);
+  const itemsPerPage=5;
+
+useEffect(() => {
+  let sorted = [...contractRequests];
+
+  if (sortField === "owner") {
+    sorted.sort((a, b) => {
+      const ownerA = ((a.owner_first_name || '').toLowerCase() + (a.owner_last_name || '').toLowerCase());
+      const ownerB = ((b.owner_first_name || '').toLowerCase() + (b.owner_last_name || '').toLowerCase());
+      return sortOrder === "asc" ? ownerA.localeCompare(ownerB) : ownerB.localeCompare(ownerA);
+    });
+  } else if (sortField === "address") {
+    sorted.sort((a, b) => {
+      const addressA = (a.property_address || '').toLowerCase();
+      const addressB = (b.property_address || '').toLowerCase();
+      return sortOrder === "asc" ? addressA.localeCompare(addressB) : addressB.localeCompare(addressA);
+    });
+  } else if (sortField === "status") {
+    sorted.sort((a, b) => {
+      const statusA = (a.contract_status || '').toLowerCase();
+      const statusB = (b.contract_status || '').toLowerCase();
+      return sortOrder === "asc" ? statusA.localeCompare(statusB) : statusB.localeCompare(statusA);
+    });
+    //compare uids
+  } else {
+    sorted.sort((a, b) => {
+      return (b.contract_uid || '').localeCompare(a.contract_uid || '');
+    });
+  }
+
+  setSortedContracts(sorted);
+}, [contractRequests, sortField, sortOrder]);
+
+//<PAGE CALCULATIONS>
+
+const totalPages=Math.ceil(sortedContracts.length/itemsPerPage);
+
+//start Index
+const startIndex=(currentPage-1)*itemsPerPage;
+//end index
+
+const endIndex=startIndex+itemsPerPage;
+//we need to slice the total page and see[first index to last index]
+const currentContracts=sortedContracts.slice(startIndex,endIndex)
+
+
+//next page
+const handleNextPage=()=>{
+  if(currentPage<totalPages){
+    setCurrentPage(currentPage+1);
+  }
+};
+//previous page
+const handlePrevPage=()=>{
+  if(currentPage>1){
+    setCurrentPage(currentPage-1);
+  }
+};
 
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
@@ -187,6 +225,7 @@ const QuotesList = (props) => {
               onClick={() => {
                 setSortField("owner");
                 toggleSortOrder();
+                setCurrentPage(1);
               }}
             >
               Owner
@@ -207,6 +246,7 @@ const QuotesList = (props) => {
               onClick={() => {
                 setSortField("address");
                 toggleSortOrder();
+                setCurrentPage(1);
               }}
             >
               Address
@@ -227,6 +267,7 @@ const QuotesList = (props) => {
               onClick={() => {
                 setSortField("status");
                 toggleSortOrder();
+                setCurrentPage(1);
               }}
             >
               Status
@@ -281,7 +322,7 @@ const QuotesList = (props) => {
                   }}
                 >
               {/* Render sorted contracts */}
-              {sortedContracts?.map((contract, index) => (
+              {currentContracts?.map((contract, index) => (
                 <Grid item xs={12} key={index} sx={{ marginBottom: 0 }}>
                   <ContractCard
                     key={index}
@@ -291,8 +332,43 @@ const QuotesList = (props) => {
                 </Grid>
               ))}
               </Stack>
+              
+              <Box sx={{ padding: "10px", textAlign: "center", backgroundColor: "#F2F2F2", borderRadius: "10px"  }}>
+                <Typography sx={{ fontSize: "14px", color: "#160449" }}>
+                Page {currentPage} of {totalPages} ({sortedContracts.length} total contracts)
+                </Typography>
+              </Box>
+              <Stack direction="row" justifyContent="center" spacing={2} sx={{ padding: "20px" }}>
+            <Button
+              variant="contained"
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              sx={{
+                background: currentPage === 1 ? "#D3D3D3" : "#3D5CAC",
+                color: "#fff",
+                textTransform: "none",
+                minWidth: "100px",
+              }} >
+              Previous
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              sx={{
+                background: currentPage === totalPages ? "#D3D3D3" : "#3D5CAC",
+                color: "#fff",
+                textTransform: "none",
+                minWidth: "100px",
+              }} >
+              Next
+                </Button>
+                        
+              
+
             </Stack>
           </Stack>
+            </Stack>
         </Grid>
       </ThemeProvider>
     </>
@@ -348,7 +424,6 @@ function ContractCard(props) {
           border: contract.contract_uid === currentContractUID ? "2px solid #4CAF50" : "none", 
         }}
         onClick={() => {
-          //console.log("inside pmquote.js - isChange - ", isChange);
           if(isChange){
             setShowGoBackDialog(true)
           }else{

@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PMQuotesRequested(props) {  
+export default function PMQuotesRequested(props) {
   const location = useLocation();
   let navigate = useNavigate();
   const { getProfileId } = useUser();
@@ -68,37 +68,37 @@ export default function PMQuotesRequested(props) {
   // const { propertyList, allContracts, fetchContracts, returnIndex,  } = useContext(PropertiesContext); 
 
   const propertiesContext = useContext(PropertiesContext);
-	const {
-	  propertyList: propertyListFromContext,	  
+  const {
+    propertyList: propertyListFromContext,
     // allContracts: allContractsFromContext,
-    fetchProperties : fetchPropertiesFromContext,
+    fetchProperties: fetchPropertiesFromContext,
     // fetchContracts: fetchContractsFromContext,	  
-	  returnIndex: returnIndexFromContext,
-	} = propertiesContext || {};
+    returnIndex: returnIndexFromContext,
+  } = propertiesContext || {};
 
   const managementContractContext = useContext(ManagementContractContext);
-	const {	  
+  const {
     allContracts: allContractsFromContext,
     fetchContracts: fetchContractsFromContext,
-	} = managementContractContext || {};
-  
-	const propertyList = propertyListFromContext || [];		
-  const allContracts = allContractsFromContext || [];	
-  const fetchContracts = fetchContractsFromContext;  
+  } = managementContractContext || {};
+
+  const propertyList = propertyListFromContext || [];
+  const allContracts = allContractsFromContext || [];
+  const fetchContracts = fetchContractsFromContext;
   const refreshProperties = fetchPropertiesFromContext;
-	const returnIndex = returnIndexFromContext || 0;
+  const returnIndex = returnIndexFromContext || 0;
 
   // //console.log("allContracts - ", allContracts);
-  
+
   const index = returnIndex || location.state?.index;
-  
+
 
   const [contracts, setContracts] = useState([]);
-  const refreshContracts = fetchContracts;  
+  const refreshContracts = fetchContracts;
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true); // New loading state  
-  const property = propertyList;  
-  const propertyId = property[returnIndex]?.property_uid;  
+  const property = propertyList;
+  const propertyId = property[returnIndex]?.property_uid;
   const isDesktop = useMediaQuery(theme.breakpoints.up("sm"));
 
   const statusColor = ["#3D5CAC", "#160449"];
@@ -117,26 +117,26 @@ export default function PMQuotesRequested(props) {
 
   const handleRequestQuotes = props.handleRequestQuotes;
 
-  const filteredContracts = contracts.filter(contract => 
-    contract.property_uid === propertyId && 
-    (contract.contract_status === "NEW" || 
-     contract.contract_status === "ACTIVE" || 
-     contract.contract_status === "SENT")
+  const filteredContracts = contracts.filter(contract =>
+    contract.property_uid === propertyId &&
+    (contract.contract_status === "NEW" ||
+      contract.contract_status === "ACTIVE" ||
+      contract.contract_status === "SENT")
   );
-    
+
   // const contractBusinessIds = filteredContracts.map(contract => contract.contract_business_id);
 
   const sentContractsIds = filteredContracts
-  .filter(contract => contract.contract_status === "SENT")
-  .map(contract => contract.contract_business_id);
+    .filter(contract => contract.contract_status === "SENT")
+    .map(contract => contract.contract_business_id);
 
   const newContractsIds = filteredContracts
-  .filter(contract => contract.contract_status === "NEW")
-  .map(contract => contract.contract_business_id);
+    .filter(contract => contract.contract_status === "NEW")
+    .map(contract => contract.contract_business_id);
 
   const activeContractsIds = filteredContracts
-  .filter(contract => contract.contract_status === "ACTIVE")
-  .map(contract => contract.contract_business_id);
+    .filter(contract => contract.contract_status === "ACTIVE")
+    .map(contract => contract.contract_business_id);
 
   function getColor(status) {
     return statusColor[status];
@@ -161,7 +161,21 @@ export default function PMQuotesRequested(props) {
     set_displayed_managers(managers);
 
   };
-  
+
+
+  //added propertId and sorting here to see notifications on side sorted
+  useEffect(() => {
+    const contractData = allContracts?.filter(
+      (contract) => contract.property_uid == propertyId
+    );
+    const sortedContracts = contractData?.sort((a, b) =>
+      b.contract_uid.localeCompare(a.contract_uid));
+
+    setContracts(sortedContracts);
+  }, [allContracts]);
+
+
+
   useEffect(() => {
     get_manager_info();
   }, []);
@@ -171,7 +185,7 @@ export default function PMQuotesRequested(props) {
     setActiveContracts(validContracts);
   }, [contracts]);
 
-  useEffect(() => {    
+  useEffect(() => {
     // //console.log("166 - propertyId - ", propertyId);
     const contractsData = allContracts?.filter(
       (contract) => contract.property_uid === propertyId
@@ -206,16 +220,16 @@ export default function PMQuotesRequested(props) {
   function displayPMQuotesRequested() {
     return (
       <div>
-        {contracts?.length > 0 ? activeContractsIds?.length !== contracts?.length ?(
+        {contracts?.length > 0 ? activeContractsIds?.length !== contracts?.length ? (
           contracts.map((contract) => {
             const manager = displayed_managers.find((m) => m.business_uid === contract.contract_business_id);
             // console.log("manager - ", manager);
-            if (contract.contract_status === "SENT" || contract.contract_status === "REFUSED"  || contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED") {
+            if (contract.contract_status === "SENT" || contract.contract_status === "REFUSED" || contract.contract_status === "WITHDRAW" || contract.contract_status === "REJECTED") {
               return (
                 <div key={contract.contract_uid}>
-                  <DocumentCard data={contract} manager={manager}/>
+                  <DocumentCard data={contract} manager={manager} />
                   {
-                    contract.contract_status === "SENT" && (                    
+                    contract.contract_status === "SENT" && (
                       <Stack
                         direction="row"
                         justifyContent="space-between"
@@ -236,7 +250,7 @@ export default function PMQuotesRequested(props) {
                             "&:hover": {
                               backgroundColor: "#D32F2F",
                               color: "#FFFFFF",
-                            }                        
+                            }
                           }}
                           onClick={() => handleDecline(contract)}
                         >
@@ -280,7 +294,7 @@ export default function PMQuotesRequested(props) {
             if (contract.contract_status === "NEW") {
               return (
                 <div key={contract.contract_uid}>
-                  <DocumentCard data={contract} manager={manager}/>
+                  <DocumentCard data={contract} manager={manager} />
                   <Stack
                     direction="row"
                     justifyContent="space-between"
@@ -301,10 +315,10 @@ export default function PMQuotesRequested(props) {
                         "&:hover": {
                           backgroundColor: "#D32F2F",
                           color: "#FFFFFF",
-                        }     
+                        }
                       }}
                       onClick={async () => {
-                        await handleStatusChange(contract, "CANCELLED");                        
+                        await handleStatusChange(contract, "CANCELLED");
                       }}
                     >
                       Cancel
@@ -315,7 +329,7 @@ export default function PMQuotesRequested(props) {
             }
             return null;
           })
-        ): (
+        ) : (
           <>
             <Box
               sx={{
@@ -325,7 +339,7 @@ export default function PMQuotesRequested(props) {
                 alignItems: 'center',
                 marginBottom: '7px',
                 width: '100%',
-                height:"50px"
+                height: "50px"
               }}
             >
               <Typography
@@ -401,11 +415,11 @@ export default function PMQuotesRequested(props) {
           />
           {displayed_managers.map((m) => (
             <SearchManagerDocumentCard
-              key={m.business_uid} 
-              data={m} 
-              ownerId={ownerId} 
-              propertyData={property} 
-              index={index} 
+              key={m.business_uid}
+              data={m}
+              ownerId={ownerId}
+              propertyData={property}
+              index={index}
               onRequestQuotes={handleRequestQuotes}
               sentContractsIds={sentContractsIds}
               newContractsIds={newContractsIds}
@@ -417,68 +431,68 @@ export default function PMQuotesRequested(props) {
     );
   }
 
-  const sendAnnouncement = async (status, obj, earlyEndDate) => {    
+  const sendAnnouncement = async (status, obj, earlyEndDate) => {
     // const contractData = allContracts?.find((contract) => contract.contract_uid === currentContractUID);
     // //console.log("sendAnnouncement - obj - ", obj);
     // //console.log("sendAnnouncement - property - ", property[returnIndex]);
 
     // //console.log("sendAnnouncement - status - ", status);
-    
+
     // return;
 
-    const contractProperty = property[returnIndex];    
+    const contractProperty = property[returnIndex];
 
     const receiverPropertyMapping = {
-        [obj.business_uid]: [obj.contract_property_id],
+      [obj.business_uid]: [obj.contract_property_id],
     };
-  
+
     let announcementTitle;
     let announcementMessage;
-    
-    if(status === "ACTIVE") {
+
+    if (status === "ACTIVE") {
       announcementTitle = `Management Contract Quote Accepted`;
       announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}. The contract is active.`;
-    } else if(status === "INACTIVE") {
+    } else if (status === "INACTIVE") {
       announcementTitle = `Management Contract Ended`;
       announcementMessage = `Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been ended by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
-    } else if(status === "ENDING") {
+    } else if (status === "ENDING") {
       announcementTitle = `Management Contract will be ended`;
       announcementMessage = `Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) will be ended on ${earlyEndDate}.`;
-    } else if(status === "APPROVED") {
+    } else if (status === "APPROVED") {
       announcementTitle = `Management Contract Quote Approved`;
       announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been accepted by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}. The contract will be active from ${obj.contract_start_date}.`;
-    } else if(status === "DECLINED") {
+    } else if (status === "DECLINED") {
       announcementTitle = `Management Contract Quote Declined`;
       announcementMessage = `Your quote for Management contract - ${obj.contract_name} (Property - ${contractProperty.property_address}${contractProperty.property_unit ? (", " + contractProperty.property_unit) : ""}) has been declined by the Owner - ${obj.owner_first_name || ""} ${obj.owner_last_name || ""}.`;
     }
-  
+
     try {
       const response = await fetch(`${APIConfig.baseURL.dev}/announcements/${getProfileId()}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            announcement_title: announcementTitle,
-            announcement_msg: announcementMessage,
-            announcement_sender: getProfileId(),
-            announcement_date: new Date().toDateString(),			  
-            announcement_properties: JSON.stringify(receiverPropertyMapping),
-            announcement_mode: "CONTRACT",
-            announcement_receiver: [obj.business_uid],
-            announcement_type: ["App", "Email", "Text"],
-          }),
-        });
-  
-        if (response.ok) {
-        
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          announcement_title: announcementTitle,
+          announcement_msg: announcementMessage,
+          announcement_sender: getProfileId(),
+          announcement_date: new Date().toDateString(),
+          announcement_properties: JSON.stringify(receiverPropertyMapping),
+          announcement_mode: "CONTRACT",
+          announcement_receiver: [obj.business_uid],
+          announcement_type: ["App", "Email", "Text"],
+        }),
+      });
+
+      if (response.ok) {
+
         // navigate("/managerDashboard"); 
-        } else {
+      } else {
         throw new Error(`Failed to send the announcement: ${response.statusText}`);
-        }
-    } catch(error) {
-        alert("Error sending announcement to the Manager");
-        console.error("Error sending announcement to Property Manager - ", error);
+      }
+    } catch (error) {
+      alert("Error sending announcement to the Manager");
+      console.error("Error sending announcement to Property Manager - ", error);
     }
   };
 
@@ -535,36 +549,36 @@ export default function PMQuotesRequested(props) {
   //   setTabStatus(1);    
   // }
 
-  const updateExistingContractStatus = ( contractObj, status, earlyEndDate) => {
+  const updateExistingContractStatus = (contractObj, status, earlyEndDate) => {
 
-    const actualEndDate = new Date(contractObj.contract_end_date)      
+    const actualEndDate = new Date(contractObj.contract_end_date)
     const formattedEarlyEndDate = `${String(earlyEndDate.getMonth() + 1).padStart(2, '0')}-${String(earlyEndDate.getDate()).padStart(2, '0')}-${earlyEndDate.getFullYear()}`;
 
     const formData = new FormData();
     formData.append("contract_uid", contractObj.contract_uid);
-    
-    if(status === "INACTIVE"){
-      formData.append("contract_status", status);            
 
-      if(earlyEndDate < actualEndDate) {
+    if (status === "INACTIVE") {
+      formData.append("contract_status", status);
+
+      if (earlyEndDate < actualEndDate) {
         formData.append("contract_early_end_date", formattedEarlyEndDate);
         formData.append("contract_renew_status", "EARLY TERMINATION");
-      }else {
+      } else {
         formData.append("contract_renew_status", "RENEWED");
       }
-    } else if(status === "ACTIVE"){
+    } else if (status === "ACTIVE") {
       // formData.append("contract_early_end_date", formattedEarlyEndDate);      
       // //console.log("earlyEndDate - ", earlyEndDate)
       // //console.log("actualEndDate - ", actualEndDate)
-      
-      if(earlyEndDate < actualEndDate) {
+
+      if (earlyEndDate < actualEndDate) {
         formData.append("contract_early_end_date", formattedEarlyEndDate);
         formData.append("contract_renew_status", "EARLY TERMINATION");
       } else {
         // return;
         formData.append("contract_renew_status", "ENDING");
       }
-      
+
     }
 
     try {
@@ -577,14 +591,14 @@ export default function PMQuotesRequested(props) {
             throw new Error("Network response was not ok");
           } else {
             //console.log("Data added successfully");
-            if(status === "ENDING"){
-              sendAnnouncement(status, contractObj, formattedEarlyEndDate);  
+            if (status === "ENDING") {
+              sendAnnouncement(status, contractObj, formattedEarlyEndDate);
             } else {
               sendAnnouncement(status, contractObj);
             }
-            
+
             refreshContracts();
-            refreshProperties();            
+            refreshProperties();
           }
         })
         .catch((error) => {
@@ -592,7 +606,7 @@ export default function PMQuotesRequested(props) {
         });
     } catch (error) {
       console.error(error);
-    } 
+    }
 
 
   }
@@ -614,7 +628,7 @@ export default function PMQuotesRequested(props) {
             //console.log("Data added successfully");
             sendAnnouncement(status, contract);
             refreshContracts();
-            refreshProperties();            
+            refreshProperties();
           }
         })
         .catch((error) => {
@@ -622,66 +636,66 @@ export default function PMQuotesRequested(props) {
         });
     } catch (error) {
       console.error(error);
-    } 
+    }
   }
 
-  function handleAccept(obj) {          
-    
-      const newContractStart = new Date(obj.contract_start_date);
-      const newContractEnd = new Date(obj.contract_end_date);
-      const newPropertyId = obj.property_uid;
+  function handleAccept(obj) {
 
-      
+    const newContractStart = new Date(obj.contract_start_date);
+    const newContractEnd = new Date(obj.contract_end_date);
+    const newPropertyId = obj.property_uid;
 
-      const existingContractIndex = activeContracts.findIndex(contract => contract.property_uid === newPropertyId && contract.contract_status === "ACTIVE");
 
-      if (existingContractIndex < 0){
-        // //console.log("ERROR - existing contract not found.");
-        acceptNewContract(obj, "ACTIVE");
-        return;
-      }
 
-      
-      const existingContract = activeContracts[existingContractIndex];
-      let newContractStatus = "";
+    const existingContractIndex = activeContracts.findIndex(contract => contract.property_uid === newPropertyId && contract.contract_status === "ACTIVE");
 
-      if (existingContract.property_uid === newPropertyId && existingContract.contract_status === "ACTIVE") {
-        const existingContractStart = new Date(existingContract.contract_start_date);
-        const existingContractEnd = new Date(existingContract.contract_end_date);
-        const today = new Date();
+    if (existingContractIndex < 0) {
+      // //console.log("ERROR - existing contract not found.");
+      acceptNewContract(obj, "ACTIVE");
+      return;
+    }
 
-        // //console.log("514 - newContractStart - ", newContractStart)
-        // //console.log("514 - existingContractEnd - ", existingContractEnd)
-        // //console.log("514 - today - ", today)        
 
-        
+    const existingContract = activeContracts[existingContractIndex];
+    let newContractStatus = "";
+
+    if (existingContract.property_uid === newPropertyId && existingContract.contract_status === "ACTIVE") {
+      const existingContractStart = new Date(existingContract.contract_start_date);
+      const existingContractEnd = new Date(existingContract.contract_end_date);
+      const today = new Date();
+
+      // //console.log("514 - newContractStart - ", newContractStart)
+      // //console.log("514 - existingContractEnd - ", existingContractEnd)
+      // //console.log("514 - today - ", today)        
+
+
+      const earlyEndDate = new Date(newContractStart)
+      earlyEndDate.setDate(newContractStart.getDate() - 1)
+
+
+      if (newContractStart <= today) {
+        newContractStatus = "ACTIVE";
+
+        //end current contract                        
+        updateExistingContractStatus(existingContract, "INACTIVE", earlyEndDate);
+
+      } else {
+        newContractStatus = "APPROVED";
+
+        //update existing contract status to ending
         const earlyEndDate = new Date(newContractStart)
         earlyEndDate.setDate(newContractStart.getDate() - 1)
-        
+        // const formattedarlyEndDate = `${String(earlyEndDate.getMonth() + 1).padStart(2, '0')}-${String(earlyEndDate.getDate()).padStart(2, '0')}-${earlyEndDate.getFullYear()}`;
+        updateExistingContractStatus(existingContract, "ACTIVE", earlyEndDate);
+      }
+      acceptNewContract(obj, newContractStatus);
+    }
 
-        if(newContractStart <= today){
-            newContractStatus = "ACTIVE";
 
-            //end current contract                        
-            updateExistingContractStatus(existingContract, "INACTIVE", earlyEndDate);
-                 
-        } else {
-          newContractStatus = "APPROVED";
-          
-          //update existing contract status to ending
-          const earlyEndDate = new Date(newContractStart)
-          earlyEndDate.setDate(newContractStart.getDate() - 1)
-          // const formattedarlyEndDate = `${String(earlyEndDate.getMonth() + 1).padStart(2, '0')}-${String(earlyEndDate.getDate()).padStart(2, '0')}-${earlyEndDate.getFullYear()}`;
-          updateExistingContractStatus(existingContract, "ACTIVE", earlyEndDate);          
-        }
-        acceptNewContract(obj, newContractStatus);   
-      }      
-      
-      
-      setTabStatus(1);    
+    setTabStatus(1);
   }
 
-  function handleDecline(obj) {        
+  function handleDecline(obj) {
     try {
       const formData = new FormData();
       formData.append("contract_uid", obj.contract_uid);
@@ -700,7 +714,7 @@ export default function PMQuotesRequested(props) {
     } catch (error) {
       console.error(error);
     }
-    
+
   }
 
   const handleStatusChange = async (obj, status) => {
@@ -720,7 +734,7 @@ export default function PMQuotesRequested(props) {
         });
     } catch (error) {
       console.error(error);
-    }    
+    }
   };
 
   const viewAllProperties = () => {
@@ -742,66 +756,66 @@ export default function PMQuotesRequested(props) {
     // <ThemeProvider theme={theme}>
     <>
       {loading ? (
-      <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+        <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color='inherit' />
-        </Backdrop> ) :(
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <Paper
+        </Backdrop>) : (
+        <Box
           sx={{
-            backgroundColor: theme.palette.primary.main,
+            display: "flex",
+            justifyContent: "center",
             width: "100%",
-            paddingTop: "10px",
+            height: "100%",
           }}
         >
-          {/* Search for property manager section */}
-          <Stack 
-            direction="row" 
-            justifyContent="space-between" 
-            alignItems="center" 
-            sx={{ paddingBottom: "0px", position: "relative", marginBottom: "10px" }}
+          <Paper
+            sx={{
+              backgroundColor: theme.palette.primary.main,
+              width: "100%",
+              paddingTop: "10px",
+            }}
           >
-            {/* Left Section - Icon */}
-            <Box onClick={viewAllProperties} sx={{ position: "absolute", left: "10px" }}>
-              <Button
+            {/* Search for property manager section */}
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ paddingBottom: "0px", position: "relative", marginBottom: "10px" }}
+            >
+              {/* Left Section - Icon */}
+              <Box onClick={viewAllProperties} sx={{ position: "absolute", left: "10px" }}>
+                <Button
+                  sx={{
+                    textTransform: "none",
+                    color: theme.typography.common.blue,
+                    fontWeight: theme.typography.common.fontWeight,
+                    fontSize: "16px",
+                    "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                  }}
+                >
+                  <ArrowBackIcon
+                    sx={{
+                      color: "#160449",
+                      fontSize: "25px",
+                      margin: "5px",
+                    }}
+                  />
+                </Button>
+              </Box>
+
+              {/* Center Section - Text */}
+              <Typography
                 sx={{
-                  textTransform: "none",
-                  color: theme.typography.common.blue,
-                  fontWeight: theme.typography.common.fontWeight,
-                  fontSize: "16px",
-                  "&:hover, &:focus, &:active": { background: theme.palette.primary.main },
+                  color: theme.typography.primary.black,
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: theme.typography.largeFont,
+                  textAlign: "center",
+                  flexGrow: 1, // Ensures the text is centered
                 }}
               >
-                <ArrowBackIcon
-                    sx={{
-                        color: "#160449",
-                        fontSize: "25px",
-                        margin: "5px",
-                    }}
-                />
-              </Button>
-            </Box>
-
-            {/* Center Section - Text */}
-            <Typography
-              sx={{
-                color: theme.typography.primary.black,
-                fontWeight: theme.typography.primary.fontWeight,
-                fontSize: theme.typography.largeFont,
-                textAlign: "center",
-                flexGrow: 1, // Ensures the text is centered
-              }}
-            >
-              {tabStatus === 0 ? "All Requested Quotes" : "Search for Properties Manager"}
-            </Typography>
-          </Stack>
-          {/* <Stack direction="column" justifyContent="center" alignItems="center" sx={{ paddingBottom: "0px" }}>
+                {tabStatus === 0 ? "All Requested Quotes" : "Search for Properties Manager"}
+              </Typography>
+            </Stack>
+            {/* <Stack direction="column" justifyContent="center" alignItems="center" sx={{ paddingBottom: "0px" }}>
             <Box onClick={viewAllProperties} position="absolute" left={10}>
               <Button
                 sx={{
@@ -831,10 +845,10 @@ export default function PMQuotesRequested(props) {
                 <SearchIcon />
               </Button>
             </Box> */}
-          {/* </Stack> */}
+            {/* </Stack> */}
 
-          {/* return to all property section */}
-          {/* <Stack direction="column" justifyContent="center" alignItems="center">
+            {/* return to all property section */}
+            {/* <Stack direction="column" justifyContent="center" alignItems="center">
             <Box onClick={viewAllProperties}>
               <Button
                 sx={{
@@ -851,119 +865,119 @@ export default function PMQuotesRequested(props) {
             </Box>
           </Stack> */}
 
-          {/* tab section */}
-          <Stack
-            sx={{
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Box
+            {/* tab section */}
+            <Stack
               sx={{
-                borderBottom: 0,
-                width: "95%",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
-              <Tabs
-                variant="fullWidth"
-                value={tabStatus}
-                // onChange={(e) => console.log(e)}
-                TabIndicatorProps={{
-                  style: {
-                    backgroundColor: "transparent",
-                    border: "0px",
-                    minWidth: "5px",
-                    height: "10px",
-                    padding: "0px",
-                  },
-                }}
+              <Box
                 sx={{
-                  [theme.breakpoints.up("sm")]: {
-                    height: "5px",
-                  },
+                  borderBottom: 0,
+                  width: "95%",
                 }}
               >
-                <Tab
-                  sx={{
-                    backgroundColor: statusColor[0],
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
-                    height: "10%",
-                    minWidth: "5px",
-                    padding: "0px",
-                    "&.Mui-selected": {
-                      color: "#FFFFFF",
+                <Tabs
+                  variant="fullWidth"
+                  value={tabStatus}
+                  // onChange={(e) => console.log(e)}
+                  TabIndicatorProps={{
+                    style: {
+                      backgroundColor: "transparent",
+                      border: "0px",
+                      minWidth: "5px",
+                      height: "10px",
+                      padding: "0px",
                     },
-                    "&.MuiTab-root": {
-                      color: "#FFFFFF",
-                    },
-                    textTransform: "none",
                   }}
-                  onClick={() => setTabStatus(0)}
-                  label="Quotes Requested"
-                />
-                <Tab
                   sx={{
-                    backgroundColor: statusColor[1],
-                    borderTopLeftRadius: "10px",
-                    borderTopRightRadius: "10px",
-                    height: "10%",
-                    minWidth: "5px",
-                    padding: "0px",
-                    "&.Mui-selected": {
-                      color: "#FFFFFF",
+                    [theme.breakpoints.up("sm")]: {
+                      height: "5px",
                     },
-                    "&.MuiTab-root": {
-                      color: "#FFFFFF",
-                    },
-                    textTransform: "none",
                   }}
-                  onClick={() => setTabStatus(1)}
-                  label="Search Manager"
-                />
-              </Tabs>
-              <Box
-                sx={{
-                  backgroundColor: getColor(tabStatus),
-                  height: "15px",
-                }}
-              ></Box>
-            </Box>
-          </Stack>
+                >
+                  <Tab
+                    sx={{
+                      backgroundColor: statusColor[0],
+                      borderTopLeftRadius: "10px",
+                      borderTopRightRadius: "10px",
+                      height: "10%",
+                      minWidth: "5px",
+                      padding: "0px",
+                      "&.Mui-selected": {
+                        color: "#FFFFFF",
+                      },
+                      "&.MuiTab-root": {
+                        color: "#FFFFFF",
+                      },
+                      textTransform: "none",
+                    }}
+                    onClick={() => setTabStatus(0)}
+                    label="Quotes Requested"
+                  />
+                  <Tab
+                    sx={{
+                      backgroundColor: statusColor[1],
+                      borderTopLeftRadius: "10px",
+                      borderTopRightRadius: "10px",
+                      height: "10%",
+                      minWidth: "5px",
+                      padding: "0px",
+                      "&.Mui-selected": {
+                        color: "#FFFFFF",
+                      },
+                      "&.MuiTab-root": {
+                        color: "#FFFFFF",
+                      },
+                      textTransform: "none",
+                    }}
+                    onClick={() => setTabStatus(1)}
+                    label="Search Manager"
+                  />
+                </Tabs>
+                <Box
+                  sx={{
+                    backgroundColor: getColor(tabStatus),
+                    height: "15px",
+                  }}
+                ></Box>
+              </Box>
+            </Stack>
 
-          <Stack direction="column" justifyContent="center" alignItems="center">
-            <Box
-              sx={{
-                borderBottom: 0,
-                width: "95%",
-              }}
-            >
+            <Stack direction="column" justifyContent="center" alignItems="center">
               <Box
                 sx={{
-                  backgroundColor: "#FFFFFF",
-                  borderRadius: "0px 0px 10px 10px",
-                  bottom: "40px",
+                  borderBottom: 0,
+                  width: "95%",
                 }}
               >
                 <Box
                   sx={{
-                    padding: "0px",
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: "0px 0px 10px 10px",
+                    bottom: "40px",
                   }}
                 >
-                  {loading ? (
-                    <CircularProgress />
-                  ) : tabStatus === 0 ? (
-                    displayPMQuotesRequested()
-                  ) : (
-                    displaySearchManager()
-                  )}
+                  <Box
+                    sx={{
+                      padding: "0px",
+                    }}
+                  >
+                    {loading ? (
+                      <CircularProgress />
+                    ) : tabStatus === 0 ? (
+                      displayPMQuotesRequested()
+                    ) : (
+                      displaySearchManager()
+                    )}
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          </Stack>
-        </Paper>
-      </Box>
-    )}
+            </Stack>
+          </Paper>
+        </Box>
+      )}
 
       <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="md" fullWidth>
         <DialogTitle sx={{ textAlign: "center", fontWeight: "bold", color: theme.typography.common.blue }}>
@@ -977,7 +991,7 @@ export default function PMQuotesRequested(props) {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
                     Contract Name
                   </Typography>
                   <TextField
@@ -1007,7 +1021,7 @@ export default function PMQuotesRequested(props) {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
                     End Date
                   </Typography>
                   <TextField
@@ -1022,7 +1036,7 @@ export default function PMQuotesRequested(props) {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
                     Status
                   </Typography>
                   <TextField
@@ -1037,11 +1051,11 @@ export default function PMQuotesRequested(props) {
                 </Grid>
               </Grid>
               <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
-              <Button fullWidth variant='contained' color='primary'  onClick={() => {
+                <Button fullWidth variant='contained' color='primary' onClick={() => {
                   navigate("/ownerContacts");
                 }} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
-             </Button>
+                  <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
+                </Button>
               </Stack>
             </Box>
 
@@ -1051,7 +1065,7 @@ export default function PMQuotesRequested(props) {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
                     Contract Name
                   </Typography>
                   <TextField
@@ -1066,7 +1080,7 @@ export default function PMQuotesRequested(props) {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
                     Start Date
                   </Typography>
                   <TextField
@@ -1081,7 +1095,7 @@ export default function PMQuotesRequested(props) {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
                     End Date
                   </Typography>
                   <TextField
@@ -1096,7 +1110,7 @@ export default function PMQuotesRequested(props) {
                   />
                 </Grid>
                 <Grid item xs={12}>
-                  <Typography  sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
+                  <Typography sx={{ fontWeight: "bold", marginBottom: 2, color: theme.typography.common.blue }}>
                     Status
                   </Typography>
                   <TextField
@@ -1111,30 +1125,30 @@ export default function PMQuotesRequested(props) {
                 </Grid>
               </Grid>
               <Stack direction="row" spacing={2} sx={{ marginTop: 2 }}>
-                <Button fullWidth variant='contained'   onClick={() => {
-                    handleDecline(newContract);
-                    handleDialogClose(); // Optional: Close dialog after rejecting
-                    // setRefresh(!refresh); // Optional: Refresh contracts list
-                  }} sx={{ mb: 2, backgroundColor: "#A52A2A" }}>
-             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Decline</Typography>
-             </Button>
-                <Button fullWidth variant='contained' color='primary'  onClick={() => {
+                <Button fullWidth variant='contained' onClick={() => {
+                  handleDecline(newContract);
+                  handleDialogClose(); // Optional: Close dialog after rejecting
+                  // setRefresh(!refresh); // Optional: Refresh contracts list
+                }} sx={{ mb: 2, backgroundColor: "#A52A2A" }}>
+                  <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Decline</Typography>
+                </Button>
+                <Button fullWidth variant='contained' color='primary' onClick={() => {
                   navigate("/ownerContacts");
                 }} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
-             </Button>
+                  <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Contact PM</Typography>
+                </Button>
               </Stack>
             </Box>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button  variant='contained' color='primary' onClick={handleDialogClose}  sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
-             <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Close</Typography>
+          <Button variant='contained' color='primary' onClick={handleDialogClose} sx={{ mb: 2, backgroundColor: "#3D5CAC" }}>
+            <Typography sx={{ fontWeight: "bold", color: "#FFFFFF", textTransform: "none" }}>Close</Typography>
           </Button>
         </DialogActions>
       </Dialog>
 
-    {/* </ThemeProvider> */}
+      {/* </ThemeProvider> */}
     </>
   );
 }
@@ -1146,11 +1160,11 @@ function DocumentCard(props) {
 
   const [fees, setFees] = useState(JSON.parse(data.contract_fees) ? JSON.parse(data.contract_fees) : []);
   const [locations, setLocations] = useState(manager?.business_locations ? JSON.parse(manager?.business_locations) : []);
-  const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents)? JSON.parse(data.contract_documents) : [])
+  const [contractDocuments, setContractDocuments] = useState(JSON.parse(data.contract_documents) ? JSON.parse(data.contract_documents) : [])
 
-  const [feesExpanded, setFeesExpanded ] = useState(false);
-  const [documentsExpanded, setDocumentsExpanded ] = useState(false);
-  
+  const [feesExpanded, setFeesExpanded] = useState(false);
+  const [documentsExpanded, setDocumentsExpanded] = useState(false);
+
 
   let navigate = useNavigate();
 
@@ -1164,14 +1178,14 @@ function DocumentCard(props) {
   const contractDocumentLink = getContractDocumentLink();
 
   const getBusinessProfileFees = async () => {
-    try {      
-      setFees(JSON.parse(data.business_services_fees)? JSON.parse(data.business_services_fees) : []);      
+    try {
+      setFees(JSON.parse(data.business_services_fees) ? JSON.parse(data.business_services_fees) : []);
     } catch (error) {
       //console.log("error", error);
     }
   };
 
-  useEffect(() => {    
+  useEffect(() => {
     if (data.contract_status === "NEW") {
       getBusinessProfileFees(data);
     }
@@ -1192,7 +1206,7 @@ function DocumentCard(props) {
   };
 
   const getContractStatusColor = () => {
-    switch(data.contract_status.trim()){
+    switch (data.contract_status.trim()) {
       case "SENT":
         return theme.palette.success.main;
       case "REFUSED":
@@ -1205,7 +1219,7 @@ function DocumentCard(props) {
   }
 
   const getContractStatusText = () => {
-    switch(data.contract_status.trim()){
+    switch (data.contract_status.trim()) {
       case "SENT":
         return "New Contract Received";
       case "NEW":
@@ -1217,7 +1231,7 @@ function DocumentCard(props) {
       case "REFUSED":
         return "Property Manager Declined";
       case "WITHDRAW":
-        return "Contract WIthdrawn";  
+        return "Contract WIthdrawn";
       default:
         return "";
     }
@@ -1315,7 +1329,7 @@ function DocumentCard(props) {
         <Grid container item xs={6}>
           <Grid item xs={12}>
             <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
-              Contract name: 
+              Contract name:
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -1326,7 +1340,7 @@ function DocumentCard(props) {
 
           <Grid item xs={12}>
             <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
-              Start Date: 
+              Start Date:
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -1337,7 +1351,7 @@ function DocumentCard(props) {
 
           <Grid item xs={12}>
             <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
-              Notice Period:  
+              Notice Period:
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -1347,26 +1361,26 @@ function DocumentCard(props) {
           </Grid>
 
           <Grid item xs={12} sx={{ marginTop: "10px" }}>
-            <FormControlLabel 
+            <FormControlLabel
               sx={{
                 marginLeft: '-2px',
-                alignItems: 'center',                            
-              }}     
+                alignItems: 'center',
+              }}
               control={
                 <Checkbox
                   disabled
-                  sx={{alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px',}, }}
+                  sx={{ alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px', }, }}
                   checked={data.contract_m2m && data.contract_m2m === 1 ? true : false}
                   // onChange={() => {
                   //   setContinueM2M( prevState => !prevState)
                   // }}                
-                  inputProps={{ 
+                  inputProps={{
                     'aria-label': 'controlled',
                     style: { alignSelf: 'flex-start', margin: '0' }
                   }}
-                />	          
-              } 
-              label={<Typography sx={{fontWeight: "600", fontSize: '14px', marginLeft: "3px"}}>Continues Month-to-Month</Typography> }
+                />
+              }
+              label={<Typography sx={{ fontWeight: "600", fontSize: '14px', marginLeft: "3px" }}>Continues Month-to-Month</Typography>}
             />
           </Grid>
         </Grid>
@@ -1385,7 +1399,7 @@ function DocumentCard(props) {
 
           <Grid item xs={12}>
             <Typography sx={{ color: '#3D5CAC', fontSize: '14px', fontWeight: 'bold' }}>
-              End Date: 
+              End Date:
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -1404,140 +1418,140 @@ function DocumentCard(props) {
               {getContractStatusText().toUpperCase()}
             </Typography>
           </Grid>
-          
+
           <Grid item xs={12} sx={{ marginTop: "10px" }}>
-            <FormControlLabel 
+            <FormControlLabel
               sx={{
                 marginLeft: '-2px',
-                alignItems: 'center',                            
-              }}     
+                alignItems: 'center',
+              }}
               control={
                 <Checkbox
                   disabled
-                  sx={{alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px',}, }}
+                  sx={{ alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px', }, }}
                   checked={data.contract_m2m && data.contract_m2m === 2 ? true : false}
                   // onChange={() => {
                   //   setContinueM2M( prevState => !prevState)
                   // }}                
-                  inputProps={{ 
+                  inputProps={{
                     'aria-label': 'controlled',
                     style: { alignSelf: 'flex-start', margin: '0' }
                   }}
-                />	          
-              } 
-              label={<Typography sx={{fontWeight: "bold", fontSize: '14px', marginLeft: "3px"}}>Renews Automatically</Typography> }
-            /> 
+                />
+              }
+              label={<Typography sx={{ fontWeight: "bold", fontSize: '14px', marginLeft: "3px" }}>Renews Automatically</Typography>}
+            />
           </Grid>
         </Grid>
       </Grid>
-      
-      <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none", marginTop:"20px"}}>
+
+      <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none", marginTop: "20px" }}>
         <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1a-content"
-            id="panel1a-header"
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel1a-content"
+          id="panel1a-header"
         >
-            <Typography 
-              sx={{
-                color: "#160449",
-                fontWeight: '600',
-                fontSize: "18px",
-                // textAlign: "center",
-                flexGrow: 1,
-              }}
-            >
-                Service Locations
-            </Typography>
+          <Typography
+            sx={{
+              color: "#160449",
+              fontWeight: '600',
+              fontSize: "18px",
+              // textAlign: "center",
+              flexGrow: 1,
+            }}
+          >
+            Service Locations
+          </Typography>
         </AccordionSummary>
-        <AccordionDetails>                        
-            {
-              locations && (
-                <>
-                  <LocationsDataGrid data={locations} />
-                </>
-              )
-            }
+        <AccordionDetails>
+          {
+            locations && (
+              <>
+                <LocationsDataGrid data={locations} />
+              </>
+            )
+          }
         </AccordionDetails>
       </Accordion>
 
       <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none" }} expanded={feesExpanded} onChange={() => setFeesExpanded(prevState => !prevState)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='fees-content' id='fees-header'>
-            <Grid container>
-                <Grid item xs={12}>
-                    <Typography
-                        sx={{
-                            color: "#160449",
-                            fontWeight: '600',
-                            fontSize: "18px",
-                            // textAlign: "center",
-                            flexGrow: 1,
-                            // paddingLeft: "50px",
-                        }}
-                        paddingTop='5px'
-                    >
-                        {data.contract_status === "NEW" ? "Estimated Fees" : "Quoted Fees"}
-                    </Typography>
-                </Grid>                
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography
+                sx={{
+                  color: "#160449",
+                  fontWeight: '600',
+                  fontSize: "18px",
+                  // textAlign: "center",
+                  flexGrow: 1,
+                  // paddingLeft: "50px",
+                }}
+                paddingTop='5px'
+              >
+                {data.contract_status === "NEW" ? "Estimated Fees" : "Quoted Fees"}
+              </Typography>
             </Grid>
+          </Grid>
         </AccordionSummary>
         <AccordionDetails>
-            {data !== null ? fees?.length !== 0 ? (
-              <>          
-                <FeesDataGrid data={fees} />            
-              </>
-            ) : (          
-              <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginBottom: '7px',
-                    width: '100%',
-                    height:"100px"
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#A9A9A9",
-                      fontWeight: theme.typography.primary.fontWeight,
-                      fontSize: "15px",
-                    }}
-                  >
-                    No Fees
-                  </Typography>
-                </Box>
-            )
-          : (
-            <Typography sx={textStyle}>No data available</Typography>
-          )}
-                                                      
+          {data !== null ? fees?.length !== 0 ? (
+            <>
+              <FeesDataGrid data={fees} />
+            </>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: '7px',
+                width: '100%',
+                height: "100px"
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#A9A9A9",
+                  fontWeight: theme.typography.primary.fontWeight,
+                  fontSize: "15px",
+                }}
+              >
+                No Fees
+              </Typography>
+            </Box>
+          )
+            : (
+              <Typography sx={textStyle}>No data available</Typography>
+            )}
+
         </AccordionDetails>
       </Accordion>
 
       {data.contract_status !== "NEW" && (
         <Accordion sx={{ backgroundColor: "#D6D5DA", boxShadow: "none" }} expanded={documentsExpanded} onChange={() => setDocumentsExpanded(prevState => !prevState)}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls='fees-content' id='fees-header'>
-              <Grid container>
-                  <Grid item xs={12}>
-                      <Typography
-                          sx={{
-                              color: "#160449",
-                              fontWeight: '600',
-                              fontSize: "18px",
-                              // textAlign: "center",
-                              flexGrow: 1,
-                              // paddingLeft: "50px",
-                          }}
-                          paddingTop='5px'
-                      >
-                          {"Attached Documents"}
-                      </Typography>
-                  </Grid>                
+            <Grid container>
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    color: "#160449",
+                    fontWeight: '600',
+                    fontSize: "18px",
+                    // textAlign: "center",
+                    flexGrow: 1,
+                    // paddingLeft: "50px",
+                  }}
+                  paddingTop='5px'
+                >
+                  {"Attached Documents"}
+                </Typography>
               </Grid>
+            </Grid>
           </AccordionSummary>
           <AccordionDetails>
-            <Documents isEditable={false} isAccord={false} documents={contractDocuments} setDocuments={setContractDocuments} customName={""}/>                                       
+            <Documents isEditable={false} isAccord={false} documents={contractDocuments} setDocuments={setContractDocuments} customName={""} />
           </AccordionDetails>
         </Accordion>
 
@@ -1552,7 +1566,7 @@ function DocumentCard(props) {
   );
 }
 
-function SearchManagerDocumentCard(props){
+function SearchManagerDocumentCard(props) {
   const obj = props.data;
   const ownerId = props.ownerId;
   const propertyData = props.propertyData;
@@ -1567,30 +1581,30 @@ function SearchManagerDocumentCard(props){
 
   // //console.log("BUSINESS Locations - ", obj.business_locations);
   let location1 = "";
-  if(obj.business_locations !== null && obj.business_locations.length > 2){
+  if (obj.business_locations !== null && obj.business_locations.length > 2) {
     // //console.log("Valid business location");
     location1 = JSON.parse(obj.business_locations);
-  }  
+  }
   let city = "";
-  if(location1.length > 0){
-    city = (location1[0]!==undefined && location1[0]!==null) ? location1[0]?.location : "";
-  }  
-  let distance = location1[0]!==undefined ? location1[0]?.distance : "";
+  if (location1.length > 0) {
+    city = (location1[0] !== undefined && location1[0] !== null) ? location1[0]?.location : "";
+  }
+  let distance = location1[0] !== undefined ? location1[0]?.distance : "";
   let feesArray = JSON.parse(obj.business_services_fees);
   let locationsArray = JSON.parse(obj.business_locations);
 
   const handleRequestQuotes = async (obj) => {
     // //console.log('---handle request quotes---', propertyData, index);
 
-    navigate("/requestQuotes",{
-      state:{
+    navigate("/requestQuotes", {
+      state: {
         managerData: obj,
         propertyData: propertyData,
         index: index,
         isDesktop: isDesktop,
       }
     }
-    );    
+    );
   };
 
   return (
@@ -1603,134 +1617,134 @@ function SearchManagerDocumentCard(props){
         fontSize: "13px",
       }}
     >
-        <Grid container>
-            <Grid item xs={8}>
-                <Box
-                    sx={{
-                        fontWeight: "bold",
-                    }}
-                >
-                    <Typography>{obj.business_name}</Typography>
-                </Box>                
-            </Grid>
-            <Grid item xs={4}>
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                    }}
-                >
-                  {newContractsIds.includes(obj.business_uid) ? (
-                    <Typography
-                      sx={{
-                        color: theme.palette.priority.high2,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Quote Requested
-                    </Typography>
-                  ) : sentContractsIds.includes(obj.business_uid) ? (
-                    <Typography
-                      sx={{
-                        color: theme.palette.priority.medium,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Quote Received 
-                    </Typography>
-                  ) : activeContractsIds.includes(obj.business_uid) ? (
-                    <Typography
-                      sx={{
-                        color: theme.palette.success.main,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Active
-                    </Typography>
-                  ) :(
-                    <Button
-                      variant="contained"
-                      sx={{
-                        textTransform: "none",
-                        width: "100%",
-                        background: "#3D5CAC",
-                        color: theme.palette.background.default,
-                        borderRadius: "10px 10px 10px 10px",
-                      }}
-                      onClick={() => onRequestQuotes(obj)}
-                    >
-                      Request Quote
-                    </Button>
-                  )}
-                </Box>
-            </Grid>
+      <Grid container>
+        <Grid item xs={8}>
+          <Box
+            sx={{
+              fontWeight: "bold",
+            }}
+          >
+            <Typography>{obj.business_name}</Typography>
+          </Box>
         </Grid>
-        <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
-          <Accordion>
-            <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-            >
-                <Typography>
-                    Service Locations
-                </Typography>
-            </AccordionSummary>
-            <AccordionDetails>                        
-                {
-                  locationsArray && (
-                    <>
-                      <LocationsDataGrid data={locationsArray} />
-                    </>
-                  )
-                }
-            </AccordionDetails>
-          </Accordion>
-        </Box>
-        <Box sx={{paddingTop: "10px", paddingBottom: "10px"}}>
-            <Accordion>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography>
-                        Estimated Fees
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>                    
-                    {
-                      feesArray && (
-                        <>
-                          <FeesDataGrid data={feesArray} />
-                        </>
-                      )
-                    }
-                </AccordionDetails>
-            </Accordion>
-        </Box>
+        <Grid item xs={4}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            {newContractsIds.includes(obj.business_uid) ? (
+              <Typography
+                sx={{
+                  color: theme.palette.priority.high2,
+                  fontWeight: "bold",
+                }}
+              >
+                Quote Requested
+              </Typography>
+            ) : sentContractsIds.includes(obj.business_uid) ? (
+              <Typography
+                sx={{
+                  color: theme.palette.priority.medium,
+                  fontWeight: "bold",
+                }}
+              >
+                Quote Received
+              </Typography>
+            ) : activeContractsIds.includes(obj.business_uid) ? (
+              <Typography
+                sx={{
+                  color: theme.palette.success.main,
+                  fontWeight: "bold",
+                }}
+              >
+                Active
+              </Typography>
+            ) : (
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  width: "100%",
+                  background: "#3D5CAC",
+                  color: theme.palette.background.default,
+                  borderRadius: "10px 10px 10px 10px",
+                }}
+                onClick={() => onRequestQuotes(obj)}
+              >
+                Request Quote
+              </Button>
+            )}
+          </Box>
+        </Grid>
+      </Grid>
+      <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography>
+              Service Locations
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {
+              locationsArray && (
+                <>
+                  <LocationsDataGrid data={locationsArray} />
+                </>
+              )
+            }
+          </AccordionDetails>
+        </Accordion>
+      </Box>
+      <Box sx={{ paddingTop: "10px", paddingBottom: "10px" }}>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+          >
+            <Typography>
+              Estimated Fees
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {
+              feesArray && (
+                <>
+                  <FeesDataGrid data={feesArray} />
+                </>
+              )
+            }
+          </AccordionDetails>
+        </Accordion>
+      </Box>
     </Box>
   );
 }
 
-export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handleEditFee}) => {
+export const FeesDataGrid = ({ data, isDeleteable = false, handleDeleteFee, handleEditFee }) => {
   const columns = isDeleteable ? [
     {
       field: "frequency",
       headerName: "Frequency",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "fee_name",
       headerName: "Name",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "charge",
       headerName: "Charge",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -1746,7 +1760,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
     {
       field: "of",
       headerName: "Of",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -1782,19 +1796,19 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
     {
       field: "frequency",
       headerName: "Frequency",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "fee_name",
       headerName: "Name",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
     },
     {
       field: "charge",
       headerName: "Charge",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -1810,7 +1824,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
     {
       field: "of",
       headerName: "Of",
-      flex:1,
+      flex: 1,
       renderHeader: (params) => <strong>{params.colDef.headerName}</strong>,
       renderCell: (params) => {
         const feeType = params.row?.fee_type;
@@ -1831,12 +1845,12 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
   // //console.log("-- inside fee data grid - ", rowsWithId);
 
   return (
-    <Box sx={{width: "100%", overflowX: "auto"}}>
+    <Box sx={{ width: "100%", overflowX: "auto" }}>
       <DataGrid
         rows={rowsWithId}
         columns={columns}
         sx={{
-          minWidth: "600px",        
+          minWidth: "600px",
           marginTop: "10px",
           "& .MuiDataGrid-row.Mui-selected": {
             backgroundColor: "transparent !important", // Removes background color
@@ -1846,7 +1860,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
           },
         }}
         autoHeight
-        rowHeight={50} 
+        rowHeight={50}
         hideFooter={true}
       />
     </Box>
@@ -1898,7 +1912,7 @@ export const FeesDataGrid = ({ data, isDeleteable=false, handleDeleteFee, handle
 
 const LocationsDataGrid = ({ data }) => {
   const columns = [
-    { 
+    {
       field: "address",
       headerName: "Address",
       width: 200,
@@ -1906,7 +1920,8 @@ const LocationsDataGrid = ({ data }) => {
         <strong>{params.colDef.headerName}</strong>
       ),
     },
-    { field: "city",
+    {
+      field: "city",
       headerName: "City",
       width: 150,
       renderHeader: (params) => (
@@ -1919,20 +1934,20 @@ const LocationsDataGrid = ({ data }) => {
       width: 100,
       renderHeader: (params) => (
         <strong>{params.colDef.headerName}</strong>
-      ),      
-    },    
+      ),
+    },
     {
       field: "miles",
       headerName: "Area of Service",
       width: 150,
       renderHeader: (params) => (
         <strong>{params.colDef.headerName}</strong>
-      ),      
+      ),
       renderCell: (params) => (
         <Typography>
           +- {params.row.miles} miles
         </Typography>
-      ),      
+      ),
     },
   ];
 
@@ -1940,7 +1955,7 @@ const LocationsDataGrid = ({ data }) => {
 
   return (
     <>
-      <Box sx={{width: "100%", overflowX: "auto"}}>
+      <Box sx={{ width: "100%", overflowX: "auto" }}>
         <DataGrid
           rows={data}
           getRowId={(fee) => fee.id}

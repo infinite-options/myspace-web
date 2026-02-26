@@ -79,6 +79,7 @@
   },
   "devDependencies": {
     "ajv": "^8.17.1",
-    "cypress": "^13.6.0"
+    "cypress": "^13.6.0",
+    "eslint-plugin-jest": "^29.12.1"
   }
 }

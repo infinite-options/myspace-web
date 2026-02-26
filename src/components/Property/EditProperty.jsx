@@ -208,6 +208,11 @@ function EditProperty(props) {
 	const [rentZestimate, setRentZestimate] = useState("");
 
 
+
+	
+
+
+
 	// Update the initial states when component mounts
 	useEffect(() => {
 		if (propertyData && propertyData.property_details) {
@@ -375,11 +380,6 @@ function EditProperty(props) {
 			setImageState([]);
 		}
 	}, [isRapidImages]);
-
-	// useEffect(() => {
-	// 	//console.log('Size of selectedImageList:', selectedImageList.length);
-	// 	//console.log('Contents of selectedImageList:', selectedImageList);
-	// }, [selectedImageList]);
 
 	const handleUnitChange = (event) => {
 		//console.log('handleUnitChange', event.target.value);
@@ -842,6 +842,7 @@ function EditProperty(props) {
 			setShowSpinner(false);
 		}
 	}
+
 
 
 	return (
@@ -1596,6 +1597,9 @@ function EditProperty(props) {
 
 					</Box>
 				</Paper>
+
+
+
 				<Box
 					sx={{
 						width: '100%',

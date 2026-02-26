@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "../../css/announcement.css";
 import AnnouncementCard from "./AnnouncementCard";
+import OwnershipTransferCard from "./OwnershipTransferCard";
+import OwnershipTransferPopup from "./OwnershipTransferPopup";
 // import Searchbar from "./Searchbar";
 // import axios from "axios";
 // import SearchFilter from "./SearchFilter";
@@ -42,6 +44,12 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
+  // Ownership Transfer states
+  const [ownershipTransfers, setOwnershipTransfers] = useState([]);
+  const [selectedTransfer, setSelectedTransfer] = useState(null);
+  const [showTransferPopup, setShowTransferPopup] = useState(false);
+  const [transferLoading, setTransferLoading] = useState(false);
+
   useEffect(() => {
     if (searchTerm === "") {
       setFilteredSentData(sentData);
@@ -80,6 +88,73 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
       setShowSpinner(false);
     });
   }, [isMsgRead]);
+
+  // Fetch ownership transfers
+  useEffect(() => {
+    fetchOwnershipTransfers();
+  }, []);
+
+  const fetchOwnershipTransfers = async () => {
+    try {
+      console.log(" Fetching ownership transfers for user:", getProfileId());
+      
+      // Fetch ALL pending transfers for this user using the new endpoint
+      const transferRes = await axios.get(`${APIConfig.baseURL.dev}/ownershipTransfersByUser/${getProfileId()}`);
+      const transferData = transferRes.data;
+      
+      console.log(" Transfer data received:", transferData);
+      
+      const allTransfers = transferData.result || [];
+      console.log(`Found ${allTransfers.length} pending transfer(s)`);
+      
+      setOwnershipTransfers(allTransfers);
+      
+      // Auto-show popup if there are pending transfers
+      if (allTransfers.length > 0) {
+        console.log(" Auto-showing transfer popup for:", allTransfers[0]);
+        setSelectedTransfer(allTransfers[0]);
+        setShowTransferPopup(true);
+      }
+    } catch (error) {
+      console.error(" Error fetching ownership transfers:", error);
+    }
+  };
+
+  const handleTransferAction = async (transferId, action) => {
+    setTransferLoading(true);
+    try {
+      const payload = {
+        transfer_id: transferId,
+        action: action,
+        user_id: getProfileId(),
+      };
+
+      const formData = new FormData();
+      formData.append("transfer_id", transferId);
+      formData.append("action", action);
+      formData.append("user_id", getProfileId());
+
+      const response = await fetch(`${APIConfig.baseURL.dev}/ownershipTransfer`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showSnackbar(`Transfer ${action.toLowerCase()}ed successfully`, "success");
+        await fetchOwnershipTransfers(); // Refresh transfers
+        setShowTransferPopup(false);
+      } else {
+        showSnackbar(data.message || `Failed to ${action.toLowerCase()} transfer`, "error");
+      }
+    } catch (error) {
+      console.error(`Error ${action.toLowerCase()}ing transfer:`, error);
+      showSnackbar(`Error ${action.toLowerCase()}ing transfer`, "error");
+    } finally {
+      setTransferLoading(false);
+    }
+  };
 
   // Handle Navigation to the Contacts
 
@@ -393,6 +468,30 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
           </div>
         </div>
 
+        {/* Ownership Transfer Requests Section */}
+        {ownershipTransfers.length > 0 && (
+          <Paper elevation={2} sx={{ width: "98%", margin: "10px", backgroundColor: "#FFF9E6", border: "2px solid #FF9800" }}>
+            <div style={{ marginBottom: "20px", fontSize: "20px", textAlign: "center", marginTop: "10px", color: "#F57C00", fontWeight: "bold" }} className='announcement-view-text'>
+              🏠 Pending Ownership Transfers ({ownershipTransfers.length})
+            </div>
+            <div style={{ marginBottom: "30px", width: "100%", maxHeight: "200px", overflow: "auto" }}>
+              <div className='announcement-list-container' style={{ maxHeight: "100%", overflowY: "auto" }}>
+                {ownershipTransfers.map((transfer, i) => (
+                  <Box
+                    key={i}
+                    onClick={() => {
+                      setSelectedTransfer(transfer);
+                      setShowTransferPopup(true);
+                    }}
+                  >
+                    <OwnershipTransferCard transfer={transfer} />
+                  </Box>
+                ))}
+              </div>
+            </div>
+          </Paper>
+        )}
+
         <Paper elevation={2} sx={{ width: "98%", margin: "10px" }}>
           <div style={{ marginBottom: "20px", fontSize: "20px", textAlign: "center", marginTop: "10px" }} className='announcement-view-text'>
             Received
@@ -514,6 +613,15 @@ export default function Announcements({ sentAnnouncementData, recvAnnouncementDa
         setShowAnnouncement={setShowAnnouncement}
         annData={annData}
         sx={{ width: "50%", height: "50%" }} // Adjust the width and height here
+      />
+      
+      <OwnershipTransferPopup
+        open={showTransferPopup}
+        onClose={() => setShowTransferPopup(false)}
+        transfer={selectedTransfer}
+        onAccept={(transferId) => handleTransferAction(transferId, "ACCEPT")}
+        onDecline={(transferId) => handleTransferAction(transferId, "DECLINE")}
+        loading={transferLoading}
       />
       </Paper>
     </div>

@@ -104,7 +104,7 @@ function ManagerDashboard() {
       // MAINTENANCE Status
       setMaintenanceStatusData(jsonData.maintenanceStatus.result);
 
-      // PROPERTY DAYA
+      // PROPERTY DAtA
       setPropertyData(jsonData.properties.result);
 
       // NEW PM REQUESTS

@@ -150,6 +150,10 @@ export default function PropertyNavigator({
   const [propertyRentStatus, setpropertyRentStatus] = useState(allRentStatus);
   const [rentFee, setrentFee] = useState({});
   const [appliances, setAppliances] = useState([]);
+  const [owners, setOwners] = useState([]);
+  const [openOwnerDialog, setOpenOwnerDialog] = useState(false);
+  const [newOwnerEmail, setNewOwnerEmail] = useState('');
+  const [newOwnerPercent, setNewOwnerPercent] = useState('');
   const [open, setOpen] = useState(false);
   const [showReferTenantDialog, setShowReferTenantDialog] = useState(false);
   const [currentApplRow, setcurrentApplRow] = useState(null);
@@ -405,6 +409,20 @@ export default function PropertyNavigator({
       } else {
         setAppliances([]);
       }
+
+      // Fetch property owners
+      const fetchOwnersLocal = async () => {
+        if (!propertyId) return;
+        try {
+          const response = await fetch(`${APIConfig.baseURL.dev}/propertyOwners/${propertyId}`);
+          const data = await response.json();
+          setOwners(data.owners || []);
+        } catch (error) {
+          console.error('Error fetching owners:', error);
+          setOwners([]);
+        }
+      };
+      fetchOwnersLocal();
     }
   }, [currentIndex, propertyId, allRentStatus, returnIndex, propertyList, allContracts, propertyData]);
   // }, [currentIndex, propertyId, allRentStatus]);
@@ -962,6 +980,123 @@ export default function PropertyNavigator({
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+  };
+
+  // Owner management functions
+  const handleOpenOwnerDialog = () => {
+    setNewOwnerEmail('');
+    setNewOwnerPercent('');
+    setOpenOwnerDialog(true);
+  };
+
+  const handleCloseOwnerDialog = () => {
+    setNewOwnerEmail('');
+    setNewOwnerPercent('');
+    setOpenOwnerDialog(false);
+  };
+
+  const fetchOwnersList = async () => {
+    if (!propertyId) return;
+    try {
+      const response = await fetch(`${APIConfig.baseURL.dev}/propertyOwners/${propertyId}`);
+      const data = await response.json();
+      setOwners(data.owners || []);
+    } catch (error) {
+      console.error('Error fetching owners:', error);
+      setOwners([]);
+    }
+  };
+
+  const handleAddOwner = async () => {
+    try {
+      setShowSpinner(true);
+      
+      const newOwnerPercentValue = parseFloat(newOwnerPercent);
+    
+      // Validation
+      if (!newOwnerEmail || !newOwnerEmail.trim()) {
+        alert('Please enter an owner UID or email');
+        setShowSpinner(false);
+        return;
+      }
+      
+      if (!newOwnerPercent || isNaN(newOwnerPercentValue) || newOwnerPercentValue <= 0 || newOwnerPercentValue > 100) {
+        alert('Please enter a valid percentage between 0 and 100');
+        setShowSpinner(false);
+        return;
+      }
+
+      // Calculate new percentages for existing owners
+      const newOwnerDecimal = newOwnerPercentValue / 100;
+      const remainingForExisting = 1 - newOwnerDecimal;
+      
+      // Calculate total of current owner percentages
+      const totalCurrent = owners.reduce((sum, owner) => sum + parseFloat(owner.po_owner_percent || 0), 0);
+
+      // Update existing owners proportionally
+      if (owners.length > 0 && totalCurrent > 0) {
+        for (const owner of owners) {
+          const currentPercent = parseFloat(owner.po_owner_percent || 0);
+          // Calculate proportional share of the remaining percentage
+          const newPercent = (currentPercent / totalCurrent) * remainingForExisting;
+          
+          // Update this owner's percentage
+          const updateResponse = await fetch(
+            `${APIConfig.baseURL.dev}/propertyOwners`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                property_id: propertyId,
+                property_owner_id: owner.property_owner_id,
+                po_owner_percent: newPercent,
+              }),
+            }
+          );
+
+          if (!updateResponse.ok) {
+            const errorData = await updateResponse.json();
+            throw new Error(errorData.message || 'Failed to update existing owner');
+          }
+        }
+      }
+
+      // Now add the new owner
+      const response = await fetch(
+        `${APIConfig.baseURL.dev}/propertyOwners`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            property_id: propertyId,
+            property_owner_id: newOwnerEmail,
+            po_owner_percent: newOwnerDecimal,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(data.message || 'Owner added successfully!');
+        setNewOwnerEmail('');
+        setNewOwnerPercent('');
+        setOpenOwnerDialog(false);
+        
+        // Refresh owners list
+        await fetchOwnersList();
+      } else {
+        alert(data.message || 'Failed to add owner');
+      }
+    } catch (error) {
+      alert('Error adding owner: ' + error.message);
+    } finally {
+      setShowSpinner(false);
+    }
   };
 
   const getApplianceCategories = () => {
@@ -2709,6 +2844,110 @@ export default function PropertyNavigator({
           {/* End Lease Details and Management Details Cards */}
           {/* </Grid> */}
 
+          {/* Property Owners Card */}
+          <Grid item xs={12} sx={{ pt: "10px" }}>
+            <Card sx={{ backgroundColor: color, height: "100%" }}>
+              <Box sx={{ margin: "15px" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "15px",
+                  }}
+                >
+                  <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
+                    <Typography
+                      sx={{
+                        color: theme.typography.primary.black,
+                        fontWeight: theme.typography.primary.fontWeight,
+                        fontSize: theme.typography.largeFont,
+                        textAlign: "center",
+                      }}
+                    >
+                      Property Owners
+                    </Typography>
+                  </Box>
+                  {selectedRole === "OWNER" && (
+                    <IconButton
+                      variant='outlined'
+                      sx={{
+                        cursor: "pointer",
+                        textTransform: "none",
+                        minWidth: "30px",
+                        minHeight: "30px",
+                      }}
+                      size='small'
+                      onClick={handleOpenOwnerDialog}
+                    >
+                      <AddIcon sx={{ color: "black", fontSize: "24px" }} />
+                    </IconButton>
+                  )}
+                </Box>
+                <Grid container spacing={2}>
+                  {owners.map((owner, index) => (
+                    <Grid item xs={12} md={6} key={index}>
+                      <Box
+                        sx={{
+                          backgroundColor: "#F2F2F2",
+                          borderRadius: "10px",
+                          padding: "15px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Box>
+                          <Typography
+                            sx={{
+                              fontWeight: theme.typography.primary.fontWeight,
+                              fontSize: theme.typography.mediumFont,
+                              color: theme.typography.primary.black,
+                            }}
+                          >
+                            {owner.owner_first_name} {owner.owner_last_name}
+                          </Typography>
+                          <Typography
+                            sx={{
+                              fontSize: theme.typography.smallFont,
+                              color: "#666",
+                            }}
+                          >
+                            {owner.owner_email}
+                          </Typography>
+                        </Box>
+                        <Typography
+                          sx={{
+                            fontWeight: theme.typography.primary.fontWeight,
+                            fontSize: "20px",
+                            color: theme.typography.primary.black,
+                          }}
+                        >
+                          {(parseFloat(owner.po_owner_percent || 0) * 100).toFixed(0)}%
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  ))}
+                  {owners.length === 0 && (
+                    <Grid item xs={12}>
+                      <Typography
+                        sx={{
+                          textAlign: "center",
+                          color: "#666",
+                          fontSize: theme.typography.mediumFont,
+                          padding: "20px",
+                        }}
+                      >
+                        No owners found for this property
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
+              </Box>
+            </Card>
+          </Grid>
+          {/* End Property Owners Card */}
+
           {/* Rent history grid */}
           <Grid item xs={12} sx={{ pt: "10px" }}>
             <Card sx={{ backgroundColor: color, height: "100%" }}>
@@ -3277,6 +3516,70 @@ export default function PropertyNavigator({
             </Card>
           </Grid>
           {/* End Appliances grid */}
+
+          {/* Add Owner Dialog */}
+          <Dialog open={openOwnerDialog} onClose={handleCloseOwnerDialog} maxWidth="sm" fullWidth>
+            <DialogTitle>Add Property Owner</DialogTitle>
+            <DialogContent>
+              <TextField
+                margin='dense'
+                label='Owner UID or Email'
+                fullWidth
+                variant='outlined'
+                value={newOwnerEmail}
+                onChange={(e) => setNewOwnerEmail(e.target.value)}
+                helperText="Enter owner UID (110-XXXXXX) or email address"
+                sx={{ marginTop: "10px" }}
+              />
+              <TextField
+                margin='dense'
+                label='Ownership Percentage'
+                fullWidth
+                variant='outlined'
+                type='number'
+                value={newOwnerPercent}
+                onChange={(e) => setNewOwnerPercent(e.target.value)}
+                helperText="Enter percentage (e.g., 50 for 50%)"
+                inputProps={{ min: 0, max: 100, step: 0.01 }}
+                sx={{ marginTop: "10px" }}
+              />
+            </DialogContent>
+            <DialogActions sx={{ alignContent: "center", justifyContent: "center", padding: "20px" }}>
+              <Button
+                variant='outlined'
+                sx={{
+                  borderColor: "#3D5CAC",
+                  color: "#3D5CAC",
+                  cursor: "pointer",
+                  textTransform: "none",
+                  width: "30%",
+                  fontWeight: theme.typography.secondary.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+                size='small'
+                onClick={handleCloseOwnerDialog}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant='contained'
+                sx={{
+                  background: "#3D5CAC",
+                  color: theme.palette.background.default,
+                  cursor: "pointer",
+                  textTransform: "none",
+                  width: "30%",
+                  fontWeight: theme.typography.secondary.fontWeight,
+                  fontSize: theme.typography.smallFont,
+                }}
+                size='small'
+                onClick={handleAddOwner}
+              >
+                Add Owner
+              </Button>
+            </DialogActions>
+          </Dialog>
+          {/* End Add Owner Dialog */}
         </Box>
         {/* End Property Detail Cards */}
       </Box>

@@ -83,6 +83,8 @@ export default function PropertyRentWidget(props) {
 
   let vacantCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "VACANT") : 0;
   vacantCount = vacantCount ? vacantCount.num : 0;
+  
+
 
   let noManagerCount = rentStatusData ? rentStatusData.find((rs) => rs.rent_status === "NO MANAGER") : 0;
   // //console.log(noManagerCount);
@@ -224,11 +226,16 @@ export default function PropertyRentWidget(props) {
             }}
             onClick={handleSelectPropertyClick}
           >
+            
             <HomeIcon fill='#3D5CAC' width='15' height='15' style={{ marginRight: "4px" }} />
             {"Select Property"}
           </Button>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-            {propertyList.map((property, index) => {
+            
+            {propertyList.length === 0 ? (
+              <MenuItem disabled>No properties available</MenuItem>
+            ) : (
+              propertyList.map((property, index) => {
               return (
                 <MenuItem
                   key={property.property_uid}
@@ -241,7 +248,7 @@ export default function PropertyRentWidget(props) {
                   {`${property.property_address}${property.property_unit ? `, Unit ${property.property_unit}` : ""}`}
                 </MenuItem>
               );
-            })}
+            }))}
 
             {/* <MenuItem onClick={() => handlePropertyClick('Property 1')}>Property 1</MenuItem>
                 <MenuItem onClick={() => handlePropertyClick('Property 2')}>Property 2</MenuItem> */}

@@ -160,7 +160,21 @@ export default function QuotesRequestAction({ maintenanceItem, navigateParams, q
 		}
 	}
 
-	function handleNavigateToQuotesRequested() {
+	async function handleNavigateToQuotesRequested() {
+		// Update status to PROCESSING
+		const formData = new FormData();
+		formData.append('maintenance_request_uid', maintenanceItem.maintenance_request_uid);
+		formData.append('maintenance_request_status', 'PROCESSING');
+
+		try {
+			await fetch(`${APIConfig.baseURL.dev}/maintenanceRequests`, {
+				method: 'PUT',
+				body: formData,
+			});
+		} catch (error) {
+			console.error('Error updating status:', error);
+		}
+
 		if (isMobile) {
 			navigate('/quoteRequest', {
 				state: {
