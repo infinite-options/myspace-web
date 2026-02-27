@@ -34,3 +34,7 @@ yarn-error.log*
 
 # Web certificates
 *.pem
+
+#Readme files
+STRIPE_IMPLEMENTATION_GUIDE.md
+STRIPE_PAYMENT_FILES_REFERENCE.md
