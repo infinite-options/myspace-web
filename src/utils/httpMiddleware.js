@@ -8,6 +8,9 @@ import { Cookies } from 'react-cookie';
 const AES_KEY = "IO95120secretkey"; // Must match the backend
 const BLOCK_SIZE = 16; // Block size in bytes
 
+// Set to false to disable encryption/decryption (auth token handling remains active)
+const ENCRYPTION_ENABLED = false;
+
 
 // Encrypt Function For FormData
 const encryptFormDataPayload = async (formData) => {
@@ -140,7 +143,7 @@ const fetchMiddleware = async (url, options = {}) => {
 
     
     // Encrypt the request body if present
-    if(options.body){
+    if(ENCRYPTION_ENABLED && options.body){
       if (options.body instanceof FormData) {
         const encryptedFormData = new FormData();
         const encryptedData = await encryptFormDataPayload(options.body);
@@ -207,8 +210,9 @@ const fetchMiddleware = async (url, options = {}) => {
           }
 
           const refreshData = await refreshResponse.json();
-          const refreshDataDecrypt = decryptPayload(refreshData.encrypted_data);
-          const newAccessToken = refreshDataDecrypt.access_token;
+          const newAccessToken = refreshData.encrypted_data
+            ? decryptPayload(refreshData.encrypted_data).access_token
+            : refreshData.access_token;
           
           // Update the token in sessionStorage
           sessionStorage.setItem('authToken', newAccessToken);
@@ -235,9 +239,9 @@ const fetchMiddleware = async (url, options = {}) => {
       if (responseData.encrypted_data) {
           let decryptedData  = decryptPayload(responseData.encrypted_data);
           console.log(" == DEBUG == Decrypted response For : ", response.url, " Response: ", decryptedData)
-          // return tempObject;
           return {
             ok: response.ok,
+            status: response.status,
             json: async () => decryptedData, // Allows dashboardData.json() to work
             text: async () => JSON.stringify(decryptedData), // Optionally return as text
           };
@@ -245,6 +249,7 @@ const fetchMiddleware = async (url, options = {}) => {
 
       return {
         ok: response.ok,
+        status: response.status,
         json: async () => responseData,
         text: async () => responseText,
       };
@@ -267,7 +272,7 @@ axiosMiddleware.interceptors.request.use(
     const token = sessionStorage.getItem('authToken');
     // console.log(" == JUST FOR DEBUG URL == ", config)
 
-    if (config.data) {
+    if (ENCRYPTION_ENABLED && config.data) {
       if (config.data instanceof FormData) {
         const encryptedFormData = new FormData();
         const encryptedData = await encryptFormDataPayload(config.data);
@@ -296,7 +301,7 @@ axiosMiddleware.interceptors.response.use(
     (response) => {
     // //console.log("response - ", response)
     if (response.data?.encrypted_data) {
-        // Decrypt the response data
+        // Decrypt the response data 
         response.data = decryptPayload(response.data.encrypted_data);
     }
     console.log(" == DEBUG == Decrypted response For : ", response.url, " Response: ", response.data)
@@ -305,7 +310,7 @@ axiosMiddleware.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         if (error.response?.status === 404){
-          error.response.data = decryptPayload(error.response?.data?.encrypted_data);
+          if (error.response?.data?.encrypted_data) error.response.data = decryptPayload(error.response?.data?.encrypted_data);
           // console.log('JWT is missing/invalid', error.response?.data);
           if (!localStorage.getItem('hasRedirected') && error.response?.data?.message !== "User not found"){
             localStorage.setItem('hasRedirected', 'true');
@@ -326,9 +331,9 @@ axiosMiddleware.interceptors.response.use(
                 });
                 
                 //Decrypt the payload to get new access token
-                const decryptedRefResp = decryptPayload(refreshResponse.data.encrypted_data);
-                // const newAccessToken = refreshResponse.data.access_token;
-                const newAccessToken = decryptedRefResp.access_token;
+                const newAccessToken = refreshResponse.data.encrypted_data
+                  ? decryptPayload(refreshResponse.data.encrypted_data).access_token
+                  : refreshResponse.data.access_token;
 
                 // Update the token in sessionStorage
                 sessionStorage.setItem('authToken', newAccessToken);
