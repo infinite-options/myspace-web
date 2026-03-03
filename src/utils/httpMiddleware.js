@@ -9,7 +9,8 @@ const AES_KEY = "IO95120secretkey"; // Must match the backend
 const BLOCK_SIZE = 16; // Block size in bytes
 
 // Set to false to disable encryption/decryption (auth token handling remains active)
-const ENCRYPTION_ENABLED = false;
+// const ENCRYPTION_ENABLED = false;
+const ENCRYPTION_ENABLED = !process.env.REACT_APP_DEBUG === 'true';
 
 
 // Encrypt Function For FormData
