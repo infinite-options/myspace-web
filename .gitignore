@@ -34,3 +34,5 @@ yarn-error.log*
 
 # Web certificates
 *.pem
+
+.expo/

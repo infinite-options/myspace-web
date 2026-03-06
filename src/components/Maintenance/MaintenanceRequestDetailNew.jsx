@@ -30,7 +30,7 @@ export function CustomTabPanel(props) {
     <div role="tabpanel" hidden={value !== index} id={`simple-tabpanel-${index}`} aria-labelledby={`simple-tab-${index}`} {...other}>
       {value === index && (
         <Box sx={{ p: 0 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -102,7 +102,8 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
   const [fromProperty, setFromProperty] = useState(location.state?.fromProperty || false);
   
   // const [value, setValue] = useState(colorStatus.findIndex((item) => item.status === (isMobile ? location.state.status : selectedStatus)));
-  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status.toUpperCase() === selectedStatus.toUpperCase()));
+  // const [value, setValue] = useState(colorStatus.findIndex((item) => item.status.toUpperCase() === selectedStatus.toUpperCase()));
+  const [value, setValue] = useState(colorStatus.findIndex((item) => item.status.toUpperCase() === (selectedStatus || "").toUpperCase()));
   const [month, setMonth] = useState(new Date().getMonth());
   const [year, setYear] = useState(new Date().getFullYear());
   const [filteredQuotes, setFilteredQuotes] = useState([]);
@@ -342,7 +343,7 @@ export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData
             >
               <Tabs
                 variant="fullWidth"
-                value={value}
+                value={Math.max(0, value)}
                 onChange={handleChange}
                 TabIndicatorProps={{
                   style: {
