@@ -225,11 +225,12 @@ export default function MaintenanceManager() {
       const addedAddresses = [];
       for (const key in maintenanceData) {
         for (const item of maintenanceData[key]) {
+          // console.log("item in maintenance data - ", item);
           if (!addedAddresses.includes(item.property_address)) {
             addedAddresses.push(item.property_address);
             if (!propertyList.includes(item.property_address)) {
               propertyList.push({
-                property_uid: item.property_id,
+                property_uid: item.maintenance_property_id,
                 address: item.property_address + " " + item.property_unit,
                 checked: true,
               });
@@ -302,7 +303,7 @@ export default function MaintenanceManager() {
     if (filterPropertyList?.length > 0) {
       filteredArray = filteredArray.filter((item) => {
         for (const filterItem of filterPropertyList) {
-          if (filterItem.property_uid === item.property_id && filterItem.checked) {
+          if (filterItem.property_uid === item.maintenance_property_id && filterItem.checked) {
             return true;
           }
         }
@@ -585,6 +586,7 @@ export default function MaintenanceManager() {
                   
 
                   return (
+                    // console.log("AllMaintenace Data: ", allMaintenanceData), 
                     <MaintenanceStatusTable
                       key={index}
                       status={item.status}
@@ -636,6 +638,7 @@ export default function MaintenanceManager() {
                     maintenanceItemsForStatus={newDataObject[selectedStatus]}
                     allMaintenancefilteredData={newDataObject}
                     setRefresh = {setRefresh}
+                    allMaintenanceData={allMaintenanceData}
                   />
                 )
               )}

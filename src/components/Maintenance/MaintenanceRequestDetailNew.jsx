@@ -50,7 +50,10 @@ function a11yProps(index) {
   };
 }
 
-export default function MaintenanceRequestDetailNew({ allMaintenancefilteredData, setRefresh, setViewRHS }) {
+export default function MaintenanceRequestDetailNew({
+  allMaintenancefilteredData = {},
+  setRefresh = () => {}, 
+  setViewRHS = () => {} }) {
   const {
     selectedRequestIndex,
     selectedStatus,
@@ -476,9 +479,3 @@ MaintenanceRequestDetailNew.propTypes = {
   allMaintenanceData: PropTypes.object.isRequired,
 };
 
-MaintenanceRequestDetailNew.defaultProps = {
-  maintenance_request_index: 0,
-  status: "",
-  maintenanceItemsForStatus: [],
-  allMaintenanceData: {},
-};

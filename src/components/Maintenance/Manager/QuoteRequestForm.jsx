@@ -648,7 +648,7 @@ export default function QuoteRequestForm({ setRefresh }) {
 									<Box sx={{display: "flex", flexDirection : "row", marginTop: "5px"}}>
 										{uniqueQuotes.map((quoteRequested) => {
 											return (
-												<Box sx={{ paddingLeft: '5px', paddingRight: '5px' }}>
+												<Box key={quoteRequested.maintenance_quote_uid} sx={{ paddingLeft: '5px', paddingRight: '5px' }}>
 													<Chip
 														label={quoteRequested.maint_business_name}
 														variant="outlined"
