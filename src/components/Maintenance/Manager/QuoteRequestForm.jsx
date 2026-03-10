@@ -55,7 +55,17 @@ export default function QuoteRequestForm({ setRefresh }) {
 
 	// //console.log("maintenance quote from request form  - ", maintenanceQuotes);
 
-	const alreadyRequestedQuotes = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes : []) : [];
+	// const alreadyRequestedQuotes = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes : []) : [];
+
+	const alreadyRequestedQuotes = Array.isArray(maintenanceQuotes)
+		? maintenanceQuotes.filter(
+				(quote) => quote?.quote_maintenance_request_id === maintenanceItem?.maintenance_request_uid
+		  )
+		: [];
+
+	// this checks if we actually have a quotes list, and if we do, it filters it to only include quotes that match the current maintenance request ID. If we don’t have a quotes list, it defaults to an empty array. This way, we ensure that we’re only looking at quotes relevant to the specific maintenance request we’re working with.
+
+
 
 	const uniqueQuotes = alreadyRequestedQuotes.filter(
 		(quote, index, self) =>
