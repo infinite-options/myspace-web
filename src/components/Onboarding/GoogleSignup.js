@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import { fetchMiddleware, axiosMiddleware } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import googleImg from "../../images/ContinueWithGoogle.svg";
 import APIConfig from "../../utils/APIConfig";
 import ListsContext from "../../contexts/ListsContext";
@@ -51,7 +52,7 @@ const GoogleSignup = (props) => {
   };
 
   const handleLogin = async (e, fn, ln, at, rt, si, ax) => {
-    axiosMiddleware.get(`https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`).then(async (response) => {
+    axiosMiddleware.get(`${API_ENDPOINTS.USER_SOCIAL_LOGIN}/${e}`).then(async (response) => {
       // console.log("----dhyey---- response from social login - ", response);
       const data = response.data;
       if (data["message"] === "User email does not exist") {
@@ -93,7 +94,7 @@ const GoogleSignup = (props) => {
         sessionStorage.setItem("refreshToken", user.refresh_token);
         await fetchLists();
 
-        let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
+        let url = `${API_ENDPOINTS.UPDATE_ACCESS_TOKEN}/${user_id}`;
         axiosMiddleware
           .post(url, {
             google_auth_token: at,
@@ -114,7 +115,7 @@ const GoogleSignup = (props) => {
               existingRoles.push(newRole);
               const updatedRole = existingRoles.join(",");
               // Send the update request to the server
-              const response = await axiosMiddleware.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+              const response = await axiosMiddleware.put(API_ENDPOINTS.UPDATE_USER_BY_UID, {
                 user_uid: user.user.user_uid,
                 role: updatedRole,
               });

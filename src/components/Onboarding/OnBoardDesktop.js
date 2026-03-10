@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import { Box, Button, Paper, ThemeProvider, Typography, Stack } from '@mui/material';
 import theme from '../../theme/theme';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -66,7 +67,7 @@ const OnBoardDesktop = () => {
         const updatedRole = existingRoles.join(",");
         payload.role = updatedRole;
         response = await axios.put(
-          "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE",
+          API_ENDPOINTS.UPDATE_USER_BY_UID,
           { user_uid: userInfo.user_uid, role: updatedRole }
         );
 
@@ -82,12 +83,12 @@ const OnBoardDesktop = () => {
       } else {
         if (user.isEmailSignup) {
           response = await axios.post(
-            "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
+            API_ENDPOINTS.CREATE_ACCOUNT,
             payload
           );
         } else {
           response = await axios.post(
-            "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE",
+            API_ENDPOINTS.USER_SOCIAL_SIGNUP,
             payload
           );
         }

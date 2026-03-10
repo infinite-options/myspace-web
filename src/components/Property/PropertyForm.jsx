@@ -48,6 +48,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import { formatPhoneNumber, headers, roleMap } from "../Onboarding/helper"
 
 import PropertiesContext from '../../contexts/PropertiesContext';
@@ -619,7 +620,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 			userRolesList.push("OWNER");
 			const updatedRoles = userRolesList.join(",");
 			// Send the update request to the server
-			const response = await axiosMiddleware.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+			const response = await axiosMiddleware.put(API_ENDPOINTS.UPDATE_USER_BY_UID, {
 				user_uid: userUID,
 				role: updatedRoles,
 			});
@@ -853,7 +854,7 @@ const PropertyForm = ({ onBack, showNewContract, property_endpoint_resp, setRelo
 		const isEmailSignup = true
 		if (isEmailSignup) {
 			const response = await axiosMiddleware.post(
-				"https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
+				API_ENDPOINTS.CREATE_ACCOUNT,
 				payload
 			);
 			if (response.data.message === "User already exists") {

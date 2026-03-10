@@ -37,6 +37,7 @@ import maintenanceDashboardImage from "./images/dashboard-images/maintenance-das
 import ownerDashboardImage from "./images/dashboard-images/owner-dashboard.png";
 import tenantDashboardImage from "./images/dashboard-images/tenant-dashboard.png";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import ListsContext from "../../contexts/ListsContext";
 
 const CreateProfile = () => {
@@ -252,7 +253,7 @@ const CreateProfile = () => {
     }
     // setShowSpinner(true);
     axios
-      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE", {
+      .post(API_ENDPOINTS.ACCOUNT_SALT, {
         email: email,
       })
       .then((res) => {
@@ -294,7 +295,7 @@ const CreateProfile = () => {
                 };
                 //console.log(JSON.stringify(loginObject));
                 axios
-                  .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
+                  .post(API_ENDPOINTS.LOGIN, loginObject)
                   .then(async (response) => {
                     //console.log(response.data.message);
                     const { message, result } = response.data;
@@ -343,7 +344,7 @@ const CreateProfile = () => {
 
     if (user.isEmailSignup) {
       console.log("Prashant This should happen for all Roles");
-      const url = "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE";
+      const url = API_ENDPOINTS.CREATE_ACCOUNT;
       const data = {
         ...user,
         first_name: firstName,
@@ -388,7 +389,7 @@ const CreateProfile = () => {
           console.error("Error:", error);
         });
     } else {
-      const url = "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE";
+      const url = API_ENDPOINTS.USER_SOCIAL_SIGNUP;
       const data = {
         ...user,
         first_name: firstName,

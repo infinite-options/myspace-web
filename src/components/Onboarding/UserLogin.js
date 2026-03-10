@@ -11,6 +11,7 @@ import UserDoesNotExistModal from "./UserDoesNotExistModal";
 import { roleMap } from "./helper";
 import { useCookies } from "react-cookie";
 import ListsContext from "../../contexts/ListsContext";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +45,7 @@ function UserLogin() {
     }
     setShowSpinner(true);
     axios
-      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE", {
+      .post(API_ENDPOINTS.ACCOUNT_SALT, {
         email: email,
       })
       .then((res) => {
@@ -86,7 +87,7 @@ function UserLogin() {
                 };
                 //console.log(JSON.stringify(loginObject));
                 axios
-                  .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
+                  .post(API_ENDPOINTS.LOGIN, loginObject)
                   .then(async(response) => {
                     //console.log(response.data.message);
                     const { message, result } = response.data;
@@ -134,7 +135,7 @@ function UserLogin() {
     }
     setShowSpinner(true);
     axios
-      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/SetTempPassword/MYSPACE", {
+      .post(API_ENDPOINTS.SET_TEMP_PASSWORD, {
         email: email,
       })
       .then((response) => {

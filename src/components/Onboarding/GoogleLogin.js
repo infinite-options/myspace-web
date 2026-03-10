@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 // import axios from "axios";
 import { fetchMiddleware as fetchMiddleware, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 import ListsContext from "../../contexts/ListsContext";
@@ -111,7 +112,7 @@ function GoogleLogin({ buttonStyle, buttonText }) {
 
                     setSocialId(si);
 
-                    axios.get(`https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`).then(async ({ data }) => {
+                    axios.get(`${API_ENDPOINTS.USER_SOCIAL_LOGIN}/${e}`).then(async ({ data }) => {
                       console.log("data is------", data["message"]);
                       if (data["message"] === "User email does not exist") {
                         console.log("hereeeeeee");
@@ -152,7 +153,7 @@ function GoogleLogin({ buttonStyle, buttonText }) {
                         sessionStorage.setItem("refreshToken", user.refresh_token);
                         await fetchLists();
 
-                        let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
+                        let url = `${API_ENDPOINTS.UPDATE_ACCESS_TOKEN}/${user_id}`;
                         axios
                           .post(url, {
                             google_auth_token: at,

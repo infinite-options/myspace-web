@@ -28,6 +28,7 @@ import theme from "../../theme/theme";
 import GoogleSignup from "./GoogleSignup";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import { useCookies } from "react-cookie";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
@@ -192,7 +193,7 @@ const NewUser = () => {
     }
     // setShowSpinner(true);
     axios
-      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE", {
+      .post(API_ENDPOINTS.ACCOUNT_SALT, {
         email: email,
       })
       .then((res) => {
@@ -234,7 +235,7 @@ const NewUser = () => {
                 };
 
                 axios
-                  .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
+                  .post(API_ENDPOINTS.LOGIN, loginObject)
                   .then(async (response) => {
                     // //console.log(response.data.message);
                     const { message, result } = response.data;
@@ -266,7 +267,7 @@ const NewUser = () => {
                         existingRoles.push(newRole);
                         const updatedRole = existingRoles.join(",");
                         // Send the update request to the server
-                        const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+                        const response = await axios.put(API_ENDPOINTS.UPDATE_USER_BY_UID, {
                           user_uid: result.user.user_uid,
                           role: updatedRole,
                         });

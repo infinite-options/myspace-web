@@ -21,6 +21,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../../contexts/UserContext';
 // import axios from 'axios';
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import APIConfig from '../../utils/APIConfig';
 
 const useStyles = makeStyles((theme) => ({
@@ -117,7 +118,7 @@ export default function ChangePasswordSettingsTenant(props) {
 					});
 			} else {
 				axios
-					.post('https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/SetTempPassword/MYSPACE', {
+					.post(API_ENDPOINTS.SET_TEMP_PASSWORD, {
 						email: emailAddress,
 					})
 					.then((response) => {

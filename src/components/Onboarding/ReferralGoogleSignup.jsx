@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import {
   Typography,
   Box,
@@ -205,7 +206,7 @@ export default function ReferralGoogleSignup({}) {
 
                   axios
                     .get(
-                      `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialLogin/MYSPACE/${e}`
+                      `${API_ENDPOINTS.USER_SOCIAL_LOGIN}/${e}`
                     )
                     .then(({ data }) => {
                       if (
@@ -238,7 +239,7 @@ export default function ReferralGoogleSignup({}) {
                         let user = data.result;
                         let user_id = data.result.user.user_uid;
                         setAccessToken(at);
-                        let url = `https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateAccessToken/MYSPACE/${user_id}`;
+                        let url = `${API_ENDPOINTS.UPDATE_ACCESS_TOKEN}/${user_id}`;
                         axios
                           .post(url, {
                             google_auth_token: at,
@@ -388,7 +389,7 @@ export default function ReferralGoogleSignup({}) {
     
     
     const response = await axios.put(
-      "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UserSocialSignUp/MYSPACE", 
+      API_ENDPOINTS.USER_SOCIAL_SIGNUP, 
       payload
     );  
     // const response = await axios.put(
@@ -549,7 +550,7 @@ export default function ReferralGoogleSignup({}) {
 
   const login = async () => {
     axios
-      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE", {
+      .post(API_ENDPOINTS.ACCOUNT_SALT, {
         email: userInfo.email,
       })
       .then((res) => {
@@ -591,7 +592,7 @@ export default function ReferralGoogleSignup({}) {
                 };
                 //console.log(JSON.stringify(loginObject));
                 axios
-                  .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject) 
+                  .post(API_ENDPOINTS.LOGIN, loginObject) 
                   // .post("http://localhost:2000/api/v2/Login/MYSPACE", loginObject)
                   .then(async (response) => {
                     //console.log(response.data.message);

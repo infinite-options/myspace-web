@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import theme from "../../theme/theme";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useUser } from "../../contexts/UserContext";
@@ -146,7 +147,7 @@ const ProfileManager = () => {
         const updatedRole = existingRoles.join(",");
 
         // Send the update request to the server
-        const response = await axios.put("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE", {
+        const response = await axios.put(API_ENDPOINTS.UPDATE_USER_BY_UID, {
           user_uid: cookies.user.user_uid,
           role: updatedRole,
         });

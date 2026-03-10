@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import {
   Typography,
   Box,
@@ -110,7 +111,7 @@ export default function ReferralSignupPassword({}) {
 
   const login = async () => {
     axios
-      .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/AccountSalt/MYSPACE", {
+      .post(API_ENDPOINTS.ACCOUNT_SALT, {
         email: userInfo.email,
       })
       .then((res) => {
@@ -152,7 +153,7 @@ export default function ReferralSignupPassword({}) {
                 };
                 //console.log(JSON.stringify(loginObject));
                 axios
-                  .post("https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/Login/MYSPACE", loginObject)
+                  .post(API_ENDPOINTS.LOGIN, loginObject)
                   // .post("http://localhost:2000/api/v2/Login/MYSPACE", loginObject)
                   .then(async(response) => {
                     //console.log(response.data.message);
@@ -228,7 +229,7 @@ export default function ReferralSignupPassword({}) {
     };    
     if (!isGoogleSignup) {
       const response = await axios.put(
-        "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
+        API_ENDPOINTS.CREATE_ACCOUNT,
         payload
       );      
       // const response = await axios.put(

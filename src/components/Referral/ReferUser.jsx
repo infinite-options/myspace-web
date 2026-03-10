@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import {
   Typography,
   Box,
@@ -156,7 +157,7 @@ export default function ReferUser({ onClose, onReferralSuccess, setReferedUser})
     const isEmailSignup = true
     if (isEmailSignup) {
       const response = await axios.post(
-        "https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/CreateAccount/MYSPACE",
+        API_ENDPOINTS.CREATE_ACCOUNT,
         payload
       );
       if (response.data.message === "User already exists") {

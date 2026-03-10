@@ -6,6 +6,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import { useCookies } from "react-cookie";
 // import axios from "axios";
 import { fetchMiddleware as fetch, axiosMiddleware as axios } from "../../utils/httpMiddleware";
+import { API_ENDPOINTS } from "../../utils/Endpoints";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../contexts/UserContext";
 
@@ -36,7 +37,7 @@ export default function AddRole() {
       ...onboardingState ?? {},
       roles:newRoles,
     });
-    const updateURL=`https://mrle52rri4.execute-api.us-west-1.amazonaws.com/dev/api/v2/UpdateUserByUID/MYSPACE` //Updating user in the DB
+    const updateURL = API_ENDPOINTS.UPDATE_USER_BY_UID; //Updating user in the DB
     const response = await axios.put(
       updateURL,
       updatePayload
