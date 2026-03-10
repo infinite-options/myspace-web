@@ -55,7 +55,13 @@ export default function QuoteRequestForm({ setRefresh }) {
 
 	// //console.log("maintenance quote from request form  - ", maintenanceQuotes);
 
-	const alreadyRequestedQuotes = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes : []) : [];
+	// const alreadyRequestedQuotes = selectedStatus !== "New Requests" ? (maintenanceQuotes ? maintenanceQuotes : []) : [];'
+
+	const alreadyRequestedQuotes = Array.isArray(maintenanceQuotes)
+		? maintenanceQuotes.filter(
+			(quote) => quote?.quote_maintenance_request_id === maintenanceItem?.maintenance_request_uid
+		)
+		: [];
 
 	const uniqueQuotes = alreadyRequestedQuotes.filter(
 		(quote, index, self) =>
