@@ -1346,29 +1346,20 @@ function DocumentCard(props) {
             </Typography>
           </Grid>
 
-          <Grid item xs={12} sx={{ marginTop: "10px" }}>
-            <FormControlLabel 
-              sx={{
-                marginLeft: '-2px',
-                alignItems: 'center',                            
-              }}     
-              control={
-                <Checkbox
-                  disabled
-                  sx={{alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px',}, }}
-                  checked={data.contract_m2m && data.contract_m2m === 1 ? true : false}
-                  // onChange={() => {
-                  //   setContinueM2M( prevState => !prevState)
-                  // }}                
-                  inputProps={{ 
-                    'aria-label': 'controlled',
-                    style: { alignSelf: 'flex-start', margin: '0' }
-                  }}
-                />	          
-              } 
-              label={<Typography sx={{fontWeight: "600", fontSize: '14px', marginLeft: "3px"}}>Continues Month-to-Month</Typography> }
-            />
-          </Grid>
+          {data.contract_m2m === 1 && (
+            <>
+              <Grid item xs={12} sx={{ marginTop: "10px" }}>
+                <Typography sx={{ color: '#3D5CAC', fontWeight: 'bold', fontSize: '14px' }}>
+                  Contract Renewal Mechanism
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography sx={{ color: '#160449', fontSize: '14px' }}>
+                  Continues Month-to-Month
+                </Typography>
+              </Grid>
+            </>
+          )}
         </Grid>
 
         <Grid container item xs={6}>
@@ -1405,29 +1396,20 @@ function DocumentCard(props) {
             </Typography>
           </Grid>
           
-          <Grid item xs={12} sx={{ marginTop: "10px" }}>
-            <FormControlLabel 
-              sx={{
-                marginLeft: '-2px',
-                alignItems: 'center',                            
-              }}     
-              control={
-                <Checkbox
-                  disabled
-                  sx={{alignSelf: 'flex-start', padding: '2px 0px', '& .MuiSvgIcon-root': { fontSize: '18px',}, }}
-                  checked={data.contract_m2m && data.contract_m2m === 2 ? true : false}
-                  // onChange={() => {
-                  //   setContinueM2M( prevState => !prevState)
-                  // }}                
-                  inputProps={{ 
-                    'aria-label': 'controlled',
-                    style: { alignSelf: 'flex-start', margin: '0' }
-                  }}
-                />	          
-              } 
-              label={<Typography sx={{fontWeight: "bold", fontSize: '14px', marginLeft: "3px"}}>Renews Automatically</Typography> }
-            /> 
-          </Grid>
+          {data.contract_m2m === 2 && (
+            <>
+              <Grid item xs={12} sx={{ marginTop: "10px" }}>
+                <Typography sx={{ color: '#3D5CAC', fontWeight: 'bold', fontSize: '14px' }}>
+                  Contract Renewal Mechanism
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography sx={{ color: '#160449', fontSize: '14px' }}>
+                  Contract Renews Automatically
+                </Typography>
+              </Grid>
+            </>
+          )}
         </Grid>
       </Grid>
       
@@ -1450,13 +1432,15 @@ function DocumentCard(props) {
             </Typography>
         </AccordionSummary>
         <AccordionDetails>                        
-            {
-              locations && (
-                <>
-                  <LocationsDataGrid data={locations} />
-                </>
-              )
-            }
+            {locations && locations.length > 0 ? (
+              <LocationsDataGrid data={locations} />
+            ) : (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60px' }}>
+                <Typography sx={{ color: "#A9A9A9", fontSize: "15px", fontWeight: theme.typography.primary.fontWeight }}>
+                  No Service Locations
+                </Typography>
+              </Box>
+            )}
         </AccordionDetails>
       </Accordion>
 

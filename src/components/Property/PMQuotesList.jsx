@@ -101,31 +101,55 @@ const QuotesList = (props) => {
   const [sortField, setSortField] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   useEffect(() => {
     let sorted = [...contractRequests];
 
     if (sortField === "owner") {
       sorted.sort((a, b) => {
-        const ownerA = a.owner_first_name.toLowerCase() + a.owner_last_name.toLowerCase();
-        const ownerB = b.owner_first_name.toLowerCase() + b.owner_last_name.toLowerCase();
+        const ownerA = ((a.owner_first_name || '').toLowerCase() + (a.owner_last_name || '').toLowerCase());
+        const ownerB = ((b.owner_first_name || '').toLowerCase() + (b.owner_last_name || '').toLowerCase());
         return sortOrder === "asc" ? ownerA.localeCompare(ownerB) : ownerB.localeCompare(ownerA);
       });
     } else if (sortField === "address") {
       sorted.sort((a, b) => {
-        const addressA = a.property_address.toLowerCase();
-        const addressB = b.property_address.toLowerCase();
+        const addressA = (a.property_address || '').toLowerCase();
+        const addressB = (b.property_address || '').toLowerCase();
         return sortOrder === "asc" ? addressA.localeCompare(addressB) : addressB.localeCompare(addressA);
       });
     } else if (sortField === "status") {
       sorted.sort((a, b) => {
-        const statusA = a.contract_status.toLowerCase();
-        const statusB = b.contract_status.toLowerCase();
+        const statusA = (a.contract_status || '').toLowerCase();
+        const statusB = (b.contract_status || '').toLowerCase();
         return sortOrder === "asc" ? statusA.localeCompare(statusB) : statusB.localeCompare(statusA);
+      });
+    } else {
+      sorted.sort((a, b) => {
+        return (b.contract_uid || '').localeCompare(a.contract_uid || '');
       });
     }
 
     setSortedContracts(sorted);
   }, [contractRequests, sortField, sortOrder]);
+
+  const totalPages = Math.ceil(sortedContracts.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentContracts = sortedContracts.slice(startIndex, endIndex);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
@@ -187,6 +211,7 @@ const QuotesList = (props) => {
               onClick={() => {
                 setSortField("owner");
                 toggleSortOrder();
+                setCurrentPage(1);
               }}
             >
               Owner
@@ -207,6 +232,7 @@ const QuotesList = (props) => {
               onClick={() => {
                 setSortField("address");
                 toggleSortOrder();
+                setCurrentPage(1);
               }}
             >
               Address
@@ -227,6 +253,7 @@ const QuotesList = (props) => {
               onClick={() => {
                 setSortField("status");
                 toggleSortOrder();
+                setCurrentPage(1);
               }}
             >
               Status
@@ -281,7 +308,7 @@ const QuotesList = (props) => {
                   }}
                 >
               {/* Render sorted contracts */}
-              {sortedContracts?.map((contract, index) => (
+              {currentContracts?.map((contract, index) => (
                 <Grid item xs={12} key={index} sx={{ marginBottom: 0 }}>
                   <ContractCard
                     key={index}
@@ -291,6 +318,32 @@ const QuotesList = (props) => {
                 </Grid>
               ))}
               </Stack>
+              {/* Pagination controls */}
+              {totalPages > 1 && (
+                <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ mt: 2 }}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                    sx={{ background: "#3D5CAC", textTransform: "none" }}
+                  >
+                    Previous
+                  </Button>
+                  <Typography sx={{ color: "#160449", fontSize: theme.typography.smallFont }}>
+                    Page {currentPage} of {totalPages}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    sx={{ background: "#3D5CAC", textTransform: "none" }}
+                  >
+                    Next
+                  </Button>
+                </Stack>
+              )}
             </Stack>
           </Stack>
         </Grid>
